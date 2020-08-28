@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
-//import Traduccion from './gramaticas/traduccion';
-//import Ejecucion from './gramaticas/ejecucion';
+import Traduccion from './gramaticas/traduccion';
+import Ejecucion from './gramaticas/ejecucion';
 
 @Component({
   selector: 'app-root',
@@ -13,7 +13,7 @@ export class AppComponent {
   consola = "";
   ejecutar(){
     try {
-     /* const value = Ejecucion.parse(this.editor);
+      const value = Ejecucion.parse(this.editor);
       for(const instr of value){
         try {
             console.log(instr);
@@ -25,7 +25,7 @@ export class AppComponent {
             //errores.push(error);  
             console.log(error);
         }
-    }*/
+    }
     } catch (error) {
       console.log(error);
       //alert("Aun no valido errores")

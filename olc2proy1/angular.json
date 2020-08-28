@@ -13,6 +13,10 @@
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
+            "allowedCommonJsDependencies": [
+              "codemirror",
+              "@ctrl/ngx-codemirror"
+            ],
             "outputPath": "dist/olc2proy1",
             "index": "src/index.html",
             "main": "src/main.ts",
