@@ -4,6 +4,7 @@
     const {Literal} = require('../Expresiones/Literal.js');
     const {Console} = require('../Instruccion/Console.js');
     const {errores,Error_} = require('../Reportes/Errores.js');
+    const { Type } = require("../Modelos/Retorno.js");
 %}
 
 %lex
@@ -135,7 +136,7 @@ Exp
 F
     : NUMERO
     {
-        $$ = new Literal($1, @1.first_line, @1.first_column, 1);
+        $$ = new Literal($1, @1.first_line, @1.first_column, Type.NUMBER);
     }
     | CADENA
     | TRUE

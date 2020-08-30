@@ -25,7 +25,7 @@ var Literal = /** @class */ (function (_super) {
         return _this;
     }
     Literal.prototype.execute = function () {
-        if (this.type <= 1)
+        if (this.type == Retorno_js_1.Type.NUMBER)
             return { value: Number(this.value), type: Retorno_js_1.Type.NUMBER };
         else
             return { value: this.value, type: Retorno_js_1.Type.STRING };

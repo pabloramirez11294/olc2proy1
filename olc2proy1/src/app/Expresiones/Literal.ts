@@ -8,7 +8,7 @@ export class Literal extends Expression{
     }
 
     public execute() : Retorno{
-        if(this.type <= 1)
+        if(this.type == Type.NUMBER)
             return {value : Number(this.value), type : Type.NUMBER};
         else
             return {value : this.value, type : Type.STRING};
