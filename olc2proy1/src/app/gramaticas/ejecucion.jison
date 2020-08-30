@@ -3,6 +3,7 @@
     const { ArithmeticOption,Aritmetico} = require('../Expresiones/Aritmetico.js');
     const {Literal} = require('../Expresiones/Literal.js');
     const {Console} = require('../Instruccion/Console.js');
+    const {errores,Error_} = require('../Reportes/Errores.js');
 %}
 
 %lex
@@ -98,7 +99,11 @@ Instruc
         {
              $$ = new Console($3, @1.first_line, @1.first_column);
         }
-        | error { console.error('Este es un error sintáctico: ' + yytext + ', en la linea: ' + this._$.first_line + ', en la columna: ' + this._$.first_column); }
+        | error 
+        { 
+            //console.error('Este es un error sintáctico: ' + yytext + ', en la linea: ' + this._$.first_line + ', en la columna: ' + this._$.first_column); 
+            $$ =new Error_(this._$.first_line , this._$.first_column, 'Sintáctico',yytext,'');
+        }
 
 ;
 
@@ -107,12 +112,25 @@ Exp
     : Exp '+' Exp
     {
         $$ = new Aritmetico($1, $3, ArithmeticOption.PLUS, @1.first_line,@1.first_column);
+    }       
+    | Exp '-' Exp
+    {
+        $$ = new Aritmetico($1, $3, ArithmeticOption.MINUS, @1.first_line,@1.first_column);
     }
-    | F{
+    | Exp '*' Exp
+    { 
+        $$ = new Aritmetico($1, $3, ArithmeticOption.TIMES, @1.first_line,@1.first_column);
+    }       
+    | Exp '/' Exp
+    {
+        $$ = new Aritmetico($1, $3, ArithmeticOption.DIV, @1.first_line,@1.first_column);
+    }   
+    | F
+    {
         $$ = $1;
     }
-
 ;
+
 
 F
     : NUMERO

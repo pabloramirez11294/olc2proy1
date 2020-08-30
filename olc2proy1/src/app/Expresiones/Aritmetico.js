@@ -32,9 +32,9 @@ var Aritmetico = /** @class */ (function (_super) {
         _this.type = type;
         return _this;
     }
-    Aritmetico.prototype.execute = function () {
-        var leftValue = this.left.execute();
-        var rightValue = this.right.execute();
+    Aritmetico.prototype.execute = function (environment) {
+        var leftValue = this.left.execute(environment);
+        var rightValue = this.right.execute(environment);
         var result;
         var tipoDominante = this.tipoDominante(leftValue.type, rightValue.type);
         if (this.type == ArithmeticOption.PLUS) {
@@ -45,9 +45,9 @@ var Aritmetico = /** @class */ (function (_super) {
             result = { value: (leftValue.value + rightValue.value), type: Retorno_js_1.Type.NUMBER };
         }
         else if (this.type == ArithmeticOption.MINUS) {
-            if (tipoDominante == Retorno_js_1.Type.STRING)
-                //    throw new Error_(this.line, this.column, 'Semantico', 'No se puede operar: ' + leftValue.type + ' _ ' + rightValue.type);
-                result = { value: (leftValue.value - rightValue.value), type: Retorno_js_1.Type.NUMBER };
+            if (tipoDominante == Retorno_js_1.Type.STRING) { }
+            //    throw new Error_(this.line, this.column, 'Semantico', 'No se puede operar: ' + leftValue.type + ' _ ' + rightValue.type);
+            result = { value: (leftValue.value - rightValue.value), type: Retorno_js_1.Type.NUMBER };
         }
         else if (this.type == ArithmeticOption.TIMES) {
             result = { value: (leftValue.value * rightValue.value), type: Retorno_js_1.Type.NUMBER };
@@ -58,7 +58,6 @@ var Aritmetico = /** @class */ (function (_super) {
             }
             result = { value: (leftValue.value / rightValue.value), type: Retorno_js_1.Type.NUMBER };
         }
-        // console.log("num1: "+result.value);
         return result;
     };
     return Aritmetico;

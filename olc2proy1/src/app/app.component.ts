@@ -1,6 +1,9 @@
 import { Component } from '@angular/core';
 import Traduccion from './gramaticas/traduccion';
 import Ejecucion from './gramaticas/ejecucion';
+import {errores,Error_} from './Reportes/Errores';
+import { Environment } from "./Entornos/Environment.js";
+localStorage.setItem('CONSOLA','');
 
 @Component({
   selector: 'app-root',
@@ -9,26 +12,41 @@ import Ejecucion from './gramaticas/ejecucion';
 })
 export class AppComponent {
   title = 'olc2proy1';
-  editor = "console.log(5+99+8+7+5);";
-  consola = "";
+  editor = "console.log(5+99+8+7+5);";  
+  consola='';
+  
   ejecutar(){
+    let errores=new Array<Error_>();
     try {
       const value = Ejecucion.parse(this.editor);
+      const env = new Environment(null);
+      
       for(const instr of value){
-        try {
-            console.log(instr);
-            const actual = instr.execute();
+        try {       
+            const actual = instr.execute(env);
+            this.setConsola();
             if(actual != null || actual != undefined){
-               // errores.push(new Error_(actual.line, actual.column, 'Semantico', actual.type + ' fuera de un ciclo'));
+                errores.push(new Error_(actual.line, actual.column, 'Semantico', actual.type + ' fuera de un ciclo',''));
             }
         } catch (error) {
-            //errores.push(error);  
-            console.log(error);
+          if(error.linea!=undefined){
+            errores.push(error);
+          }
+            
+            console.log("Recorrido instruc sd ",error);
         }
     }
+    
     } catch (error) {
-      console.log(error);
-      //alert("Aun no valido errores")
+      errores.push(new Error_(error.lineNumber, 0,'Lexico', error.message,''));
     }
+    console.log("Reporte errores:",errores);
+  }
+  
+  setConsola(){
+    this.consola = localStorage.getItem('CONSOLA');
   }
 }
+
+
+

@@ -72,12 +72,12 @@
   }
 */
 var ejecucion = (function(){
-var o=function(k,v,o,l){for(o=o||{},l=k.length;l--;o[k[l]]=v);return o},$V0=[1,6],$V1=[1,5],$V2=[1,13],$V3=[1,8],$V4=[1,9],$V5=[1,10],$V6=[1,11],$V7=[1,12],$V8=[2,5,8,9,14,15,16,17,18],$V9=[1,16],$Va=[2,5,8,9,10,12,14,15,16,17,18];
+var o=function(k,v,o,l){for(o=o||{},l=k.length;l--;o[k[l]]=v);return o},$V0=[1,6],$V1=[1,5],$V2=[1,13],$V3=[1,8],$V4=[1,9],$V5=[1,10],$V6=[1,11],$V7=[1,12],$V8=[2,5,8,9,17,18,19,20,21],$V9=[1,16],$Va=[1,17],$Vb=[1,18],$Vc=[1,19],$Vd=[2,5,8,9,10,12,13,14,15,17,18,19,20,21],$Ve=[2,5,8,9,10,12,13,17,18,19,20,21];
 var parser = {trace: function trace () { },
 yy: {},
-symbols_: {"error":2,"Init":3,"Cont":4,"EOF":5,"Instruc":6,"Exp":7,"CONSOLE":8,"(":9,")":10,";":11,"+":12,"F":13,"NUMERO":14,"CADENA":15,"TRUE":16,"FALSE":17,"ID":18,"++":19,"--":20,".":21,"LlamadaTypes":22,"$accept":0,"$end":1},
-terminals_: {2:"error",5:"EOF",8:"CONSOLE",9:"(",10:")",11:";",12:"+",14:"NUMERO",15:"CADENA",16:"TRUE",17:"FALSE",18:"ID",19:"++",20:"--",21:".",22:"LlamadaTypes"},
-productions_: [0,[3,2],[4,2],[4,1],[6,1],[6,5],[6,1],[7,3],[7,1],[13,1],[13,1],[13,1],[13,1],[13,1],[13,2],[13,2],[13,3],[13,3]],
+symbols_: {"error":2,"Init":3,"Cont":4,"EOF":5,"Instruc":6,"Exp":7,"CONSOLE":8,"(":9,")":10,";":11,"+":12,"-":13,"*":14,"/":15,"F":16,"NUMERO":17,"CADENA":18,"TRUE":19,"FALSE":20,"ID":21,"++":22,"--":23,".":24,"LlamadaTypes":25,"$accept":0,"$end":1},
+terminals_: {2:"error",5:"EOF",8:"CONSOLE",9:"(",10:")",11:";",12:"+",13:"-",14:"*",15:"/",17:"NUMERO",18:"CADENA",19:"TRUE",20:"FALSE",21:"ID",22:"++",23:"--",24:".",25:"LlamadaTypes"},
+productions_: [0,[3,2],[4,2],[4,1],[6,1],[6,5],[6,1],[7,3],[7,3],[7,3],[7,3],[7,1],[16,1],[16,1],[16,1],[16,1],[16,1],[16,2],[16,2],[16,3],[16,3]],
 performAction: function anonymous(yytext, yyleng, yylineno, yy, yystate /* action[1] */, $$ /* vstack */, _$ /* lstack */) {
 /* this == yyval */
 
@@ -110,7 +110,10 @@ case 5:
         
 break;
 case 6:
- console.error('Este es un error sintáctico: ' + yytext + ', en la linea: ' + this._$.first_line + ', en la columna: ' + this._$.first_column); 
+ 
+            //console.error('Este es un error sintáctico: ' + yytext + ', en la linea: ' + this._$.first_line + ', en la columna: ' + this._$.first_column); 
+            this.$ =new Error_(this._$.first_line , this._$.first_column, 'Sintáctico',yytext,'');
+        
 break;
 case 7:
 
@@ -119,17 +122,32 @@ case 7:
 break;
 case 8:
 
-        this.$ = $$[$0];
+        this.$ = new Aritmetico($$[$0-2], $$[$0], ArithmeticOption.MINUS, _$[$0-2].first_line,_$[$0-2].first_column);
     
 break;
 case 9:
+ 
+        this.$ = new Aritmetico($$[$0-2], $$[$0], ArithmeticOption.TIMES, _$[$0-2].first_line,_$[$0-2].first_column);
+    
+break;
+case 10:
+
+        this.$ = new Aritmetico($$[$0-2], $$[$0], ArithmeticOption.DIV, _$[$0-2].first_line,_$[$0-2].first_column);
+    
+break;
+case 11:
+
+        this.$ = $$[$0];
+    
+break;
+case 12:
 
         this.$ = new Literal($$[$0], _$[$0].first_line, _$[$0].first_column, 1);
     
 break;
 }
 },
-table: [{2:$V0,3:1,4:2,6:3,7:4,8:$V1,9:$V2,13:7,14:$V3,15:$V4,16:$V5,17:$V6,18:$V7},{1:[3]},{2:$V0,5:[1,14],6:15,7:4,8:$V1,9:$V2,13:7,14:$V3,15:$V4,16:$V5,17:$V6,18:$V7},o($V8,[2,3]),o($V8,[2,4],{12:$V9}),{9:[1,17]},o($V8,[2,6]),o($Va,[2,8]),o($Va,[2,9]),o($Va,[2,10]),o($Va,[2,11]),o($Va,[2,12]),o($Va,[2,13],{19:[1,18],20:[1,19],21:[1,20]}),{7:21,9:$V2,13:7,14:$V3,15:$V4,16:$V5,17:$V6,18:$V7},{1:[2,1]},o($V8,[2,2]),{7:22,9:$V2,13:7,14:$V3,15:$V4,16:$V5,17:$V6,18:$V7},{7:23,9:$V2,13:7,14:$V3,15:$V4,16:$V5,17:$V6,18:$V7},o($Va,[2,14]),o($Va,[2,15]),{22:[1,24]},{10:[1,25],12:$V9},o($Va,[2,7]),{10:[1,26],12:$V9},o($Va,[2,17]),o($Va,[2,16]),{11:[1,27]},o($V8,[2,5])],
+table: [{2:$V0,3:1,4:2,6:3,7:4,8:$V1,9:$V2,16:7,17:$V3,18:$V4,19:$V5,20:$V6,21:$V7},{1:[3]},{2:$V0,5:[1,14],6:15,7:4,8:$V1,9:$V2,16:7,17:$V3,18:$V4,19:$V5,20:$V6,21:$V7},o($V8,[2,3]),o($V8,[2,4],{12:$V9,13:$Va,14:$Vb,15:$Vc}),{9:[1,20]},o($V8,[2,6]),o($Vd,[2,11]),o($Vd,[2,12]),o($Vd,[2,13]),o($Vd,[2,14]),o($Vd,[2,15]),o($Vd,[2,16],{22:[1,21],23:[1,22],24:[1,23]}),{7:24,9:$V2,16:7,17:$V3,18:$V4,19:$V5,20:$V6,21:$V7},{1:[2,1]},o($V8,[2,2]),{7:25,9:$V2,16:7,17:$V3,18:$V4,19:$V5,20:$V6,21:$V7},{7:26,9:$V2,16:7,17:$V3,18:$V4,19:$V5,20:$V6,21:$V7},{7:27,9:$V2,16:7,17:$V3,18:$V4,19:$V5,20:$V6,21:$V7},{7:28,9:$V2,16:7,17:$V3,18:$V4,19:$V5,20:$V6,21:$V7},{7:29,9:$V2,16:7,17:$V3,18:$V4,19:$V5,20:$V6,21:$V7},o($Vd,[2,17]),o($Vd,[2,18]),{25:[1,30]},{10:[1,31],12:$V9,13:$Va,14:$Vb,15:$Vc},o($Ve,[2,7],{14:$Vb,15:$Vc}),o($Ve,[2,8],{14:$Vb,15:$Vc}),o($Vd,[2,9]),o($Vd,[2,10]),{10:[1,32],12:$V9,13:$Va,14:$Vb,15:$Vc},o($Vd,[2,20]),o($Vd,[2,19]),{11:[1,33]},o($V8,[2,5])],
 defaultActions: {14:[2,1]},
 parseError: function parseError (str, hash) {
     if (hash.recoverable) {
@@ -382,6 +400,7 @@ _handle_error:
     const { ArithmeticOption,Aritmetico} = require('../Expresiones/Aritmetico.js');
     const {Literal} = require('../Expresiones/Literal.js');
     const {Console} = require('../Instruccion/Console.js');
+    const {errores,Error_} = require('../Reportes/Errores.js');
 /* generated by jison-lex 0.3.4 */
 var lexer = (function(){
 var lexer = ({
@@ -716,9 +735,9 @@ case 1:// comentario simple línea
 break;
 case 2:// comentario multiple líneas
 break;
-case 3:return 14
+case 3:return 17
 break;
-case 4:return 15
+case 4:return 18
 break;
 case 5:return 'NUMBER'
 break;
@@ -726,9 +745,9 @@ case 6:return 'STRING'
 break;
 case 7:return 'BOOLEAN'
 break;
-case 8:return 16
+case 8:return 19
 break;
-case 9:return 17
+case 9:return 20
 break;
 case 10:return 'VOID'
 break;
@@ -740,21 +759,21 @@ case 13:return 'CONST'
 break;
 case 14:return 8
 break;
-case 15:return '-'
+case 15:return 13
 break;
 case 16:return 12
 break;
 case 17:return '**'
 break;
-case 18:return '*'
+case 18:return 14
 break;
-case 19:return '/'
+case 19:return 15
 break;
 case 20:return '%'
 break;
-case 21:return 19
+case 21:return 22
 break;
-case 22:return 20
+case 22:return 23
 break;
 case 23:return '>'
 break;
@@ -786,7 +805,7 @@ case 36:return 10
 break;
 case 37:return 11
 break;
-case 38:return 18
+case 38:return 21
 break;
 case 39:return 5
 break;

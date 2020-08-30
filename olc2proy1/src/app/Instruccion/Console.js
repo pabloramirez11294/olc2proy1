@@ -23,8 +23,15 @@ var Console = /** @class */ (function (_super) {
         return _this;
     }
     Console.prototype.execute = function (environment) {
-        var value = this.value.execute();
+        var value = this.value.execute(environment);
         console.log(value);
+        this.setConsola(value);
+    };
+    Console.prototype.setConsola = function (contenido) {
+        if (localStorage.getItem('CONSOLA') == undefined) {
+            return null;
+        }
+        localStorage.setItem('CONSOLA', localStorage.getItem('CONSOLA') + contenido.value + "\n");
     };
     return Console;
 }(Instruction_js_1.Instruction));

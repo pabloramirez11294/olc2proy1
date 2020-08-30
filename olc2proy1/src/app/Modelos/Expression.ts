@@ -1,5 +1,5 @@
 import { Retorno, Type } from "./Retorno.js";
-
+import { Environment } from "../Entornos/Environment.js";
 
 export abstract class Expression {
 
@@ -11,7 +11,7 @@ export abstract class Expression {
         this.column = column;
     }
 
-    public abstract execute() : Retorno;
+    public abstract execute(environment : Environment) : Retorno;
 
     public tipoDominante(tipo1 : Type, tipo2 : Type) : Type{
         if(tipo1 == Type.NULL || tipo2 == Type.NULL)
