@@ -1,7 +1,7 @@
 import { Expression } from "../Modelos/Expression.js";
 import { Retorno, Type } from "../Modelos/Retorno.js";
 import { Environment } from "../Entornos/Environment.js";
-
+import {Error_} from '../Reportes/Errores.js';
 export enum ArithmeticOption{
     PLUS,
     MINUS,
@@ -29,8 +29,8 @@ export class Aritmetico extends Expression{
             
         }
         else if(this.type == ArithmeticOption.MINUS){
-            if(tipoDominante == Type.STRING){}
-            //    throw new Error_(this.line, this.column, 'Semantico', 'No se puede operar: ' + leftValue.type + ' _ ' + rightValue.type);
+            if(tipoDominante == Type.STRING)
+                throw new Error_(this.line, this.column, 'Semantico', 'No se puede restar: ' + leftValue.type + ' con ' + rightValue.type,"");
             result = {value : (leftValue.value - rightValue.value), type : Type.NUMBER};
         }
         else if(this.type == ArithmeticOption.TIMES){

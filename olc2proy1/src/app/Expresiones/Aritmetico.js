@@ -16,6 +16,7 @@ exports.__esModule = true;
 exports.Aritmetico = exports.ArithmeticOption = void 0;
 var Expression_js_1 = require("../Modelos/Expression.js");
 var Retorno_js_1 = require("../Modelos/Retorno.js");
+var Errores_js_1 = require("../Reportes/Errores.js");
 var ArithmeticOption;
 (function (ArithmeticOption) {
     ArithmeticOption[ArithmeticOption["PLUS"] = 0] = "PLUS";
@@ -45,8 +46,8 @@ var Aritmetico = /** @class */ (function (_super) {
             result = { value: (leftValue.value + rightValue.value), type: Retorno_js_1.Type.NUMBER };
         }
         else if (this.type == ArithmeticOption.MINUS) {
-            if (tipoDominante == Retorno_js_1.Type.STRING) { }
-            //    throw new Error_(this.line, this.column, 'Semantico', 'No se puede operar: ' + leftValue.type + ' _ ' + rightValue.type);
+            if (tipoDominante == Retorno_js_1.Type.STRING)
+                throw new Errores_js_1.Error_(this.line, this.column, 'Semantico', 'No se puede restar: ' + leftValue.type + ' con ' + rightValue.type, "");
             result = { value: (leftValue.value - rightValue.value), type: Retorno_js_1.Type.NUMBER };
         }
         else if (this.type == ArithmeticOption.TIMES) {

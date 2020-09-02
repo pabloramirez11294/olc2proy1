@@ -33,8 +33,10 @@ string  (\"[^"]*\")
 "const"                 return 'CONST'
 "console.log"           return 'CONSOLE'
 
-"-"                   return '-'
+
+
 "+"                   return '+'
+"-"                   return '-'
 "**"                    return '**'
 "*"                   return '*'
 "/"                   return '/'
@@ -70,6 +72,7 @@ string  (\"[^"]*\")
 %left '+' '-'
 %left '*' '/'
 %left '**' '%'
+//%left MENOS
 %start Init
 
 %%
@@ -125,7 +128,17 @@ Exp
     | Exp '/' Exp
     {
         $$ = new Aritmetico($1, $3, ArithmeticOption.DIV, @1.first_line,@1.first_column);
-    }   
+    }            
+    | Exp '>' Exp   
+    | Exp '<' Exp   
+    | Exp '>=' Exp   
+    | Exp '<=' Exp   
+    | Exp '==' Exp   
+    | Exp '=!' Exp   
+    | '(' Exp ')'
+    {
+        $$ = $2;
+    }
     | F
     {
         $$ = $1;
@@ -139,13 +152,26 @@ F
         $$ = new Literal($1, @1.first_line, @1.first_column, Type.NUMBER);
     }
     | CADENA
+    {
+        $$ = new Literal($1.replace(/\"/g,""), @1.first_line, @1.first_column, Type.STRING);
+    }
     | TRUE
+    {
+         $$ = new Literal($1, @1.first_line, @1.first_column, Type.BOOLEAN);
+    }
     | FALSE
+    {
+        $$ = new Literal($1, @1.first_line, @1.first_column, Type.BOOLEAN);
+    }
     | ID
     | ID '++'
     | ID '--'
-    | '(' Exp ')'
     | ID '.' LlamadaTypes
+    /*TODO terminar operador unario -
+    |'-' Exp %prec MENOS	
+    {
+       // $$ = new Aritmetico(null, $2, ArithmeticOption.MINUS, @1.first_line,@1.first_column);
+    }*/
 ;
 
 

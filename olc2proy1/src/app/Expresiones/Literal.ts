@@ -10,7 +10,9 @@ export class Literal extends Expression{
     public execute() : Retorno{
         if(this.type == Type.NUMBER)
             return {value : Number(this.value), type : Type.NUMBER};
-        else
+        else if(this.type == Type.STRING)
             return {value : this.value, type : Type.STRING};
+        else if(this.type == Type.BOOLEAN)
+            return {value : this.value, type : Type.BOOLEAN};
     }
 }

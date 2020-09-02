@@ -19,11 +19,11 @@ export class AppComponent {
     let errores=new Array<Error_>();
     try {
       const value = Ejecucion.parse(this.editor);
-      const env = new Environment(null);
+      const entorno = new Environment(null);
       
       for(const instr of value){
         try {       
-            const actual = instr.execute(env);
+            const actual = instr.execute(entorno);
             this.setConsola();
             if(actual != null || actual != undefined){
                 errores.push(new Error_(actual.line, actual.column, 'Semantico', actual.type + ' fuera de un ciclo',''));
@@ -32,8 +32,6 @@ export class AppComponent {
           if(error.linea!=undefined){
             errores.push(error);
           }
-            
-            console.log("Recorrido instruc sd ",error);
         }
     }
     

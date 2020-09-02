@@ -27,8 +27,10 @@ var Literal = /** @class */ (function (_super) {
     Literal.prototype.execute = function () {
         if (this.type == Retorno_js_1.Type.NUMBER)
             return { value: Number(this.value), type: Retorno_js_1.Type.NUMBER };
-        else
+        else if (this.type == Retorno_js_1.Type.STRING)
             return { value: this.value, type: Retorno_js_1.Type.STRING };
+        else if (this.type == Retorno_js_1.Type.BOOLEAN)
+            return { value: this.value, type: Retorno_js_1.Type.BOOLEAN };
     };
     return Literal;
 }(Expression_js_1.Expression));

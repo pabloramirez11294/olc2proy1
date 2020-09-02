@@ -1,6 +1,6 @@
 import { Retorno, Type } from "./Retorno.js";
 import { Environment } from "../Entornos/Environment.js";
-
+import {errores,Error_} from '../Reportes/Errores.js';
 export abstract class Expression {
 
     public line: number;
@@ -13,14 +13,36 @@ export abstract class Expression {
 
     public abstract execute(environment : Environment) : Retorno;
 
-    public tipoDominante(tipo1 : Type, tipo2 : Type) : Type{
+
+    public mismoTipo(tipo1 : Type, tipo2 : Type){
+        if(tipo1 == Type.STRING && tipo2 == Type.STRING){
+            return Type.STRING;
+        }else if(tipo1 == Type.NUMBER && tipo2 == Type.NUMBER){
+            return Type.NUMBER;
+        }else{
+            //TODO colocar el ambito
+            throw new Error_(this.line, this.column, "Semantico", "Error los valores deben de ser del mismo tipo.","");
+        }
+    }
+
+    public tipoDominante(tipo1 : number, tipo2 : number) : Type{
+        
         if(tipo1 == Type.NULL || tipo2 == Type.NULL)
             return Type.NULL;
         else if(tipo1 == Type.STRING || tipo2 == Type.STRING)
             return Type.STRING;
-        else if(tipo1 == Type.NUMBER || tipo2 == Type.NUMBER)
+        else if(tipo1 == Type.NUMBER && tipo2 == Type.NUMBER)
             return Type.NUMBER;
-        return Type.BOOLEAN;
+        else if((tipo1 == Type.BOOLEAN && tipo2 == Type.STRING) || (tipo2 == Type.BOOLEAN && tipo1 == Type.STRING))
+            return Type.STRING;
+        else if(tipo1 == Type.BOOLEAN && tipo2 == Type.BOOLEAN)
+            return Type.BOOLEAN;
+        else{
+            //TODO colocar el ambito
+            throw new Error_(this.line, this.column, "Semantico", "Error en los tipos de datos","");
+        }
+            
+            
     }
 
 }
