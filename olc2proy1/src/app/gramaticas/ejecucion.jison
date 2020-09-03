@@ -1,10 +1,12 @@
  
 %{
     const { ArithmeticOption,Aritmetico} = require('../Expresiones/Aritmetico.js');
+    const {Relacional, RelationalOption} = require('../Expresiones/Relacional.js');
     const {Literal} = require('../Expresiones/Literal.js');
     const {Console} = require('../Instruccion/Console.js');
     const {errores,Error_} = require('../Reportes/Errores.js');
     const { Type } = require("../Modelos/Retorno.js");
+    const {If} = require('../Instruccion/If.js');
 %}
 
 %lex
@@ -32,6 +34,9 @@ string  (\"[^"]*\")
 "let"                  return 'LET'
 "const"                 return 'CONST'
 "console.log"           return 'CONSOLE'
+//sentenicas de control
+"if"                    return 'IF'
+"else"                  return 'ELSE'
 
 
 
@@ -57,6 +62,8 @@ string  (\"[^"]*\")
 "="                     return '='  
 "("                     return '('
 ")"                     return ')' 
+"{"                     return '{'
+"}"                     return '}' 
 ";"                   return ';'
 
 
@@ -96,12 +103,12 @@ Cont
 ;
 
 Instruc
-        : Exp {
-        $$ = $1;
-        }
-        | 'CONSOLE' '(' Exp ')' ';'
+        : 'CONSOLE' '(' Exp ')' ';'
         {
              $$ = new Console($3, @1.first_line, @1.first_column);
+        }
+        | Sentencia_if {
+            $$ = $1;
         }
         | error 
         { 
@@ -109,6 +116,24 @@ Instruc
             $$ =new Error_(this._$.first_line , this._$.first_column, 'Sintáctico',yytext,'');
         }
 
+;
+
+Sentencia_if
+            : 'IF' '(' Exp ')' Instrucciones Sentencia_else
+            {
+                $$ = new If($3, $5, $6, @1.first_line, @1.first_column);
+            }
+;
+
+Sentencia_else
+                : 'ELSE' Sentencia_if { $$ = $2;}
+                | 'ELSE' Instrucciones { $$ = $2;}
+                |  { $$ = null;}
+;
+
+Instrucciones
+    : '{' Instruc '}' {$$ = $2;}
+    | '{' '}' { $$ = null;}
 ;
 
 
@@ -131,10 +156,13 @@ Exp
     }            
     | Exp '>' Exp   
     | Exp '<' Exp   
+    {
+        $$ = new Relacional($1, $3,RelationalOption.MENOR, @1.first_line, @1.first_column);
+    }
     | Exp '>=' Exp   
     | Exp '<=' Exp   
     | Exp '==' Exp   
-    | Exp '=!' Exp   
+    | Exp '!=' Exp   
     | '(' Exp ')'
     {
         $$ = $2;

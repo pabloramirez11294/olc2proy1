@@ -37,7 +37,7 @@ var Relacional = /** @class */ (function (_super) {
     Relacional.prototype.execute = function (environment) {
         var leftValue = this.left.execute(environment);
         var rightValue = this.right.execute(environment);
-        var result;
+        var result = { value: null, type: null };
         this.mismoTipo(leftValue.type, rightValue.type);
         if (this.type == RelationalOption.MENOR) {
             result.value = leftValue.value < rightValue.value;
