@@ -18,24 +18,24 @@ var Instruction_js_1 = require("../Modelos/Instruction.js");
 var Retorno_js_1 = require("../Modelos/Retorno.js");
 var If = /** @class */ (function (_super) {
     __extends(If, _super);
-    function If(condition, code, elsSt, line, column) {
+    function If(condicion, codeIF, codeElse, line, column) {
         var _this = _super.call(this, line, column) || this;
-        _this.condition = condition;
-        _this.code = code;
-        _this.elsSt = elsSt;
+        _this.condicion = condicion;
+        _this.codeIF = codeIF;
+        _this.codeElse = codeElse;
         return _this;
     }
-    If.prototype.execute = function (env) {
+    If.prototype.execute = function (ent) {
         var _a;
-        var condition = this.condition.execute(env);
-        if (condition.type != Retorno_js_1.Type.BOOLEAN) {
-            throw { error: "La condicion no es booleana", linea: this.line, columna: this.column };
+        var condicion = this.condicion.execute(ent);
+        if (condicion.type != Retorno_js_1.Type.BOOLEAN) {
+            throw { error: "La expresion no regresa un valor booleano.", linea: this.line, columna: this.column };
         }
-        if (condition.value == true) {
-            return this.code.execute(env);
+        if (condicion.value == true) {
+            return this.codeIF.execute(ent);
         }
         else {
-            return (_a = this.elsSt) === null || _a === void 0 ? void 0 : _a.execute(env);
+            return (_a = this.codeElse) === null || _a === void 0 ? void 0 : _a.execute(ent);
         }
     };
     return If;

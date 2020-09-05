@@ -5,22 +5,21 @@ import { Type } from "../Modelos/Retorno.js";
 import {Error_} from '../Reportes/Errores.js';
 export class If extends Instruction{
 
-    constructor(private condition : Expression, private code : Instruction, private elsSt : Instruction | null,
+    constructor(private condicion : Expression, private codeIF : Instruction, private codeElse : Instruction | null,
         line : number, column : number){
         super(line, column);
     }
 
-    public execute(env : Environment) {
-        const condition = this.condition.execute(env);
-        if(condition.type != Type.BOOLEAN){
-            throw {error: "La condicion no es booleana", linea: this.line, columna : this.column};
+    public execute(ent : Environment) {
+        const condicion = this.condicion.execute(ent);
+        if(condicion.type != Type.BOOLEAN){
+            throw {error: "La expresion no regresa un valor booleano.", linea: this.line, columna : this.column};
         }
         
-        if(condition.value == true){
-            return this.code.execute(env);
-        }
-        else{
-            return this.elsSt?.execute(env);
+        if(condicion.value == true){
+            return this.codeIF.execute(ent);
+        }else{
+            return this.codeElse?.execute(ent);
         }
     }
 }

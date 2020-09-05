@@ -19,7 +19,7 @@ var Retorno_js_1 = require("../Modelos/Retorno.js");
 var RelationalOption;
 (function (RelationalOption) {
     RelationalOption[RelationalOption["MENOR"] = 0] = "MENOR";
-    RelationalOption[RelationalOption["MARYOR"] = 1] = "MARYOR";
+    RelationalOption[RelationalOption["MAYOR"] = 1] = "MAYOR";
     RelationalOption[RelationalOption["MENORIGUAL"] = 2] = "MENORIGUAL";
     RelationalOption[RelationalOption["MAYORIGUAL"] = 3] = "MAYORIGUAL";
     RelationalOption[RelationalOption["IGUAL"] = 4] = "IGUAL";
@@ -41,6 +41,26 @@ var Relacional = /** @class */ (function (_super) {
         this.mismoTipo(leftValue.type, rightValue.type);
         if (this.type == RelationalOption.MENOR) {
             result.value = leftValue.value < rightValue.value;
+            result.type = Retorno_js_1.Type.BOOLEAN;
+        }
+        else if (this.type == RelationalOption.MAYOR) {
+            result.value = leftValue.value > rightValue.value;
+            result.type = Retorno_js_1.Type.BOOLEAN;
+        }
+        else if (this.type == RelationalOption.MENORIGUAL) {
+            result.value = leftValue.value <= rightValue.value;
+            result.type = Retorno_js_1.Type.BOOLEAN;
+        }
+        else if (this.type == RelationalOption.MAYORIGUAL) {
+            result.value = leftValue.value >= rightValue.value;
+            result.type = Retorno_js_1.Type.BOOLEAN;
+        }
+        else if (this.type == RelationalOption.IGUAL) {
+            result.value = leftValue.value == rightValue.value;
+            result.type = Retorno_js_1.Type.BOOLEAN;
+        }
+        else if (this.type == RelationalOption.NOIGUAL) {
+            result.value = leftValue.value != rightValue.value;
             result.type = Retorno_js_1.Type.BOOLEAN;
         }
         return result;

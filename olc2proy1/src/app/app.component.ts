@@ -12,9 +12,13 @@ localStorage.setItem('CONSOLA','');
 })
 export class AppComponent {
   title = 'olc2proy1';
-  editor = "console.log(5+99+8+7+5); if(2 < 20){ "+
-    "console.log(55-8);"+
-   " }";  
+  editor = `if(1000 < 20){
+    console.log(1); 
+  }else if(500<100){
+    console.log(2); 
+  }else{
+    console.log(3); 
+  }`;  
   consola='';
   
   ejecutar(){

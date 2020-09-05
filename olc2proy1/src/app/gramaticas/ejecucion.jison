@@ -48,10 +48,10 @@ string  (\"[^"]*\")
 "%"                     return '%'
 "++"                    return '++'
 "--"                    return '--'
-">"                     return '>'
-"<"                     return '<'
 ">="                    return '>='
 "<="                    return '<='
+">"                     return '>'
+"<"                     return '<'
 "=="                    return '=='
 "!="                    return '!='
 "&&"                    return '&&'
@@ -155,14 +155,29 @@ Exp
         $$ = new Aritmetico($1, $3, ArithmeticOption.DIV, @1.first_line,@1.first_column);
     }            
     | Exp '>' Exp   
+    {
+        $$ = new Relacional($1, $3,RelationalOption.MAYOR, @1.first_line, @1.first_column);
+    }
     | Exp '<' Exp   
     {
         $$ = new Relacional($1, $3,RelationalOption.MENOR, @1.first_line, @1.first_column);
     }
     | Exp '>=' Exp   
+    {
+        $$ = new Relacional($1, $3,RelationalOption.MAYORIGUAL, @1.first_line, @1.first_column);
+    }
     | Exp '<=' Exp   
+    {
+        $$ = new Relacional($1, $3,RelationalOption.MENORIGUAL, @1.first_line, @1.first_column);
+    }
     | Exp '==' Exp   
-    | Exp '!=' Exp   
+    {
+        $$ = new Relacional($1, $3,RelationalOption.IGUAL, @1.first_line, @1.first_column);
+    }
+    | Exp '!=' Exp  
+    {
+        $$ = new Relacional($1, $3,RelationalOption.NOIGUAL, @1.first_line, @1.first_column);
+    } 
     | '(' Exp ')'
     {
         $$ = $2;
