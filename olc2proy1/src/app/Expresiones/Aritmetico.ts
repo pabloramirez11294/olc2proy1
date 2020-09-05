@@ -38,7 +38,7 @@ export class Aritmetico extends Expression{
         }
         else{
             if(rightValue.value == 0){
-              //  throw new Error_(this.line, this.column, "Semantico", "No se puede dividir entre 0");
+              //TODO  throw new Error_(this.line, this.column, "Semantico", "No se puede dividir entre 0");
             }
             result = {value : (leftValue.value / rightValue.value), type : Type.NUMBER};
         }

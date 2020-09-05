@@ -7,6 +7,7 @@
     const {errores,Error_} = require('../Reportes/Errores.js');
     const { Type } = require("../Modelos/Retorno.js");
     const {If} = require('../Instruccion/If.js');
+    const {Declaracion} = require('../Instruccion/Declaracion.js');
 %}
 
 %lex
@@ -110,6 +111,7 @@ Instruc
         | Sentencia_if {
             $$ = $1;
         }
+        | Declaracion {$$ = $1;}
         | error 
         { 
             //console.error('Este es un error sintáctico: ' + yytext + ', en la linea: ' + this._$.first_line + ', en la columna: ' + this._$.first_column); 
@@ -117,7 +119,7 @@ Instruc
         }
 
 ;
-
+//*********************SENTENCIAS DE CONTROL
 Sentencia_if
             : 'IF' '(' Exp ')' Instrucciones Sentencia_else
             {
@@ -134,6 +136,26 @@ Sentencia_else
 Instrucciones
     : '{' Instruc '}' {$$ = $2;}
     | '{' '}' { $$ = null;}
+;
+
+
+//*********************** DECLARACION DE VARIABLES
+
+Declaracion
+            : 'LET' ID ':' Tipo '=' Exp ';'
+            {
+                $$ = new Declaracion($2,Type.NUMBER,$6, @1.first_line, @1.first_column);
+            }
+            | 'LET' ID ':' Tipo ';'
+            | 'CONST' ID ':' Tipo '=' Exp ';' 
+;
+
+
+Tipo
+    : 'NUMBER' { $$ = $1; }
+    | 'STRING' { $$ = $1; }
+    | 'BOOLEAN' { $$ = $1; }
+    | 'VOID' { $$ = $1; }
 ;
 
 

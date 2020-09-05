@@ -34,5 +34,8 @@ export class Environment{
         return null;
     }   
 
+    public getTablaSimbolos():Map<string, Simbolo>{
+        return this.variables;
+    }
     
 }

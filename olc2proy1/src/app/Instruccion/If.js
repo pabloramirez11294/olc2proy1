@@ -16,6 +16,7 @@ exports.__esModule = true;
 exports.If = void 0;
 var Instruction_js_1 = require("../Modelos/Instruction.js");
 var Retorno_js_1 = require("../Modelos/Retorno.js");
+var Errores_js_1 = require("../Reportes/Errores.js");
 var If = /** @class */ (function (_super) {
     __extends(If, _super);
     function If(condicion, codeIF, codeElse, line, column) {
@@ -29,7 +30,7 @@ var If = /** @class */ (function (_super) {
         var _a;
         var condicion = this.condicion.execute(ent);
         if (condicion.type != Retorno_js_1.Type.BOOLEAN) {
-            throw { error: "La expresion no regresa un valor booleano.", linea: this.line, columna: this.column };
+            throw new Errores_js_1.Error_(this.line, this.column, 'Semantico', 'La expresion no regresa un valor booleano: ' + condicion.value + ", es de tipo: " + condicion.type, "");
         }
         if (condicion.value == true) {
             return this.codeIF.execute(ent);

@@ -13,7 +13,7 @@ export class If extends Instruction{
     public execute(ent : Environment) {
         const condicion = this.condicion.execute(ent);
         if(condicion.type != Type.BOOLEAN){
-            throw {error: "La expresion no regresa un valor booleano.", linea: this.line, columna : this.column};
+            throw new Error_(this.line, this.column, 'Semantico', 'La expresion no regresa un valor booleano: ' + condicion.value+", es de tipo: "+condicion.type ,"");
         }
         
         if(condicion.value == true){

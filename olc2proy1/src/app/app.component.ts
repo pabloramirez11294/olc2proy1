@@ -3,6 +3,7 @@ import Traduccion from './gramaticas/traduccion';
 import Ejecucion from './gramaticas/ejecucion';
 import {errores,Error_} from './Reportes/Errores';
 import { Environment } from "./Entornos/Environment.js";
+import { countColumn } from 'codemirror';
 localStorage.setItem('CONSOLA','');
 
 @Component({
@@ -23,9 +24,9 @@ export class AppComponent {
   
   ejecutar(){
     let errores=new Array<Error_>();
+    const entorno = new Environment(null);
     try {
-      const value = Ejecucion.parse(this.editor);
-      const entorno = new Environment(null);
+      const value = Ejecucion.parse(this.editor);     
       
       for(const instr of value){
         try {       
@@ -44,6 +45,7 @@ export class AppComponent {
     } catch (error) {
       errores.push(new Error_(error.lineNumber, 0,'Lexico', error.message,''));
     }
+    console.log("Tabla de Simbolos: ",entorno.getTablaSimbolos());
     console.log("Reporte errores:",errores);
   }
   

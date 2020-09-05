@@ -28,6 +28,9 @@ var Environment = /** @class */ (function () {
         }
         return null;
     };
+    Environment.prototype.getTablaSimbolos = function () {
+        return this.variables;
+    };
     return Environment;
 }());
 exports.Environment = Environment;
