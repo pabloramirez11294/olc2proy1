@@ -5,7 +5,7 @@ export class Error_{
         private descripcion : string, private ambito: string){
             
     }
-    public execute(environment : Environment) {
+    public execute() {
         throw new Error_(this.linea , this.columna, this.tipo,this.descripcion,this.ambito);
     }
 }

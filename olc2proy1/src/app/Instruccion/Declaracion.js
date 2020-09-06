@@ -27,8 +27,9 @@ var Declaracion = /** @class */ (function (_super) {
     }
     Declaracion.prototype.execute = function (environment) {
         var valor = this.exp.execute(environment);
+        //TODO colocar el ambito
         if (valor.type != this.tipo) {
-            throw new Errores_js_1.Error_(this.line, this.column, 'Semantico', 'DECLARACION: no coincide el tipo con el valor, valor:' + valor.value + ", tipo: " + valor.type, "");
+            throw new Errores_js_1.Error_(this.line, this.column, 'Semantico', 'DECLARACION: no coincide el tipo con el valor, valor:' + valor.value + ", tipo: " + this.tipo, "");
         }
         environment.guardar(this.id, valor.value, this.tipo);
     };

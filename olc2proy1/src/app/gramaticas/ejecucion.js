@@ -134,11 +134,20 @@ this.$ = $$[$0-1];
 break;
 case 14:
 
-                this.$ = new Declaracion($$[$0-5],Type.NUMBER,$$[$0-1], _$[$0-6].first_line, _$[$0-6].first_column);
+                this.$ = new Declaracion($$[$0-5],$$[$0-3],$$[$0-1], _$[$0-6].first_line, _$[$0-6].first_column);
             
 break;
-case 17: case 18: case 19: case 20:
- this.$ = $$[$0]; 
+case 17:
+ this.$ = Type.NUMBER; 
+break;
+case 18:
+ this.$ = Type.STRING; 
+break;
+case 19:
+ this.$ = Type.BOOLEAN; 
+break;
+case 20:
+ this.$ = Type.VOID; 
 break;
 case 21:
 
@@ -218,6 +227,11 @@ break;
 case 36:
 
         this.$ = new Literal($$[$0], _$[$0].first_line, _$[$0].first_column, Type.BOOLEAN);
+    
+break;
+case 37:
+
+        this.$ = new Variable($$[$0],_$[$0].first_line, _$[$0].first_column);
     
 break;
 }
@@ -475,6 +489,7 @@ _handle_error:
     const { ArithmeticOption,Aritmetico} = require('../Expresiones/Aritmetico.js');
     const {Relacional, RelationalOption} = require('../Expresiones/Relacional.js');
     const {Literal} = require('../Expresiones/Literal.js');
+    const {Variable} = require('../Expresiones/Variable.js');
     const {Console} = require('../Instruccion/Console.js');
     const {errores,Error_} = require('../Reportes/Errores.js');
     const { Type } = require("../Modelos/Retorno.js");

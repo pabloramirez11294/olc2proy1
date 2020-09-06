@@ -9,7 +9,7 @@ var Error_ = /** @class */ (function () {
         this.descripcion = descripcion;
         this.ambito = ambito;
     }
-    Error_.prototype.execute = function (environment) {
+    Error_.prototype.execute = function () {
         throw new Error_(this.linea, this.columna, this.tipo, this.descripcion, this.ambito);
     };
     return Error_;

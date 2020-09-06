@@ -3,6 +3,7 @@
     const { ArithmeticOption,Aritmetico} = require('../Expresiones/Aritmetico.js');
     const {Relacional, RelationalOption} = require('../Expresiones/Relacional.js');
     const {Literal} = require('../Expresiones/Literal.js');
+    const {Variable} = require('../Expresiones/Variable.js');
     const {Console} = require('../Instruccion/Console.js');
     const {errores,Error_} = require('../Reportes/Errores.js');
     const { Type } = require("../Modelos/Retorno.js");
@@ -144,7 +145,7 @@ Instrucciones
 Declaracion
             : 'LET' ID ':' Tipo '=' Exp ';'
             {
-                $$ = new Declaracion($2,Type.NUMBER,$6, @1.first_line, @1.first_column);
+                $$ = new Declaracion($2,$4,$6, @1.first_line, @1.first_column);
             }
             | 'LET' ID ':' Tipo ';'
             | 'CONST' ID ':' Tipo '=' Exp ';' 
@@ -152,10 +153,10 @@ Declaracion
 
 
 Tipo
-    : 'NUMBER' { $$ = $1; }
-    | 'STRING' { $$ = $1; }
-    | 'BOOLEAN' { $$ = $1; }
-    | 'VOID' { $$ = $1; }
+    : 'NUMBER' { $$ = Type.NUMBER; }
+    | 'STRING' { $$ = Type.STRING; }
+    | 'BOOLEAN' { $$ = Type.BOOLEAN; }
+    | 'VOID' { $$ = Type.VOID; }
 ;
 
 
@@ -229,6 +230,9 @@ F
         $$ = new Literal($1, @1.first_line, @1.first_column, Type.BOOLEAN);
     }
     | ID
+    {
+        $$ = new Variable($1,@1.first_line, @1.first_column);
+    }
     | ID '++'
     | ID '--'
     | ID '.' LlamadaTypes

@@ -13,8 +13,9 @@ export class Declaracion extends Instruction{
 
     public execute(environment: Environment) {
         const valor = this.exp.execute(environment);
+        //TODO colocar el ambito
         if(valor.type != this.tipo){
-            throw new Error_(this.line, this.column, 'Semantico', 'DECLARACION: no coincide el tipo con el valor, valor:' + valor.value+", tipo: "+valor.type ,"");        }
+            throw new Error_(this.line, this.column, 'Semantico', 'DECLARACION: no coincide el tipo con el valor, valor:' + valor.value+", tipo: "+this.tipo ,"");        }
         environment.guardar(this.id, valor.value, this.tipo);
     }
 }
