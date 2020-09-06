@@ -223,11 +223,11 @@ F
     }
     | TRUE
     {
-         $$ = new Literal($1, @1.first_line, @1.first_column, Type.BOOLEAN);
+         $$ = new Literal(true, @1.first_line, @1.first_column, Type.BOOLEAN);
     }
     | FALSE
     {
-        $$ = new Literal($1, @1.first_line, @1.first_column, Type.BOOLEAN);
+        $$ = new Literal(false, @1.first_line, @1.first_column, Type.BOOLEAN);
     }
     | ID
     {

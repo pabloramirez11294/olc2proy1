@@ -1,11 +1,7 @@
 import { Component } from '@angular/core';
-import Traduccion from './gramaticas/traduccion';
-import Ejecucion from './gramaticas/ejecucion';
-import { errores, Error_ } from './Reportes/Errores';
+import Ejecucion from './gramaticas/ejecucion.js';
+import {  Error_ } from './Reportes/Errores.js';
 import { Environment } from './Entornos/Environment.js';
-import { countColumn } from 'codemirror';
-import { Instruction } from './Modelos/Instruction.js';
-import { env } from 'process';
 localStorage.setItem('CONSOLA', '');
 
 @Component({
@@ -15,7 +11,7 @@ localStorage.setItem('CONSOLA', '');
 })
 export class AppComponent {
   title = 'olc2proy1';
-  editor = `
+  editor = `console.log(3);
   let a:number=1.99;
   let b:string="hola mundo";
   let c:boolean=true;
@@ -42,6 +38,7 @@ export class AppComponent {
             errores.push(new Error_(actual.line,actual.column,'Semantico',actual.type + ' fuera de un ciclo',''));
           }         
         } catch (error) {
+          //console.log(error)
           if(error.ambito!=null){
             error.ambito='global';
             errores.push(error);  
@@ -51,6 +48,7 @@ export class AppComponent {
         }
       }
     } catch (error) {
+      //console.log(error)
       errores.push(new Error_(error.lineNumber, 0, 'Lexico', error.message, 'global')
       );
     }

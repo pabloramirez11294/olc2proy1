@@ -40,10 +40,11 @@ var Aritmetico = /** @class */ (function (_super) {
         var tipoDominante = this.tipoDominante(leftValue.type, rightValue.type);
         if (this.type == ArithmeticOption.PLUS) {
             if (tipoDominante == Retorno_js_1.Type.STRING)
-                result = { value: (leftValue.value.toString() + rightValue.value.toString()), type: Retorno_js_1.Type.NUMBER };
+                result = { value: (leftValue.value.toString() + rightValue.value.toString()), type: Retorno_js_1.Type.STRING };
+            else if (tipoDominante == Retorno_js_1.Type.NUMBER)
+                result = { value: (leftValue.value + rightValue.value), type: Retorno_js_1.Type.NUMBER };
             else
-                (tipoDominante == Retorno_js_1.Type.NUMBER);
-            result = { value: (leftValue.value + rightValue.value), type: Retorno_js_1.Type.NUMBER };
+                throw new Errores_js_1.Error_(this.line, this.column, "Semantico", "Error no se pueden sumar :" + leftValue.type + " y " + rightValue.type, environment.getNombre());
         }
         else if (this.type == ArithmeticOption.MINUS) {
             if (tipoDominante == Retorno_js_1.Type.STRING)
@@ -55,7 +56,7 @@ var Aritmetico = /** @class */ (function (_super) {
         }
         else {
             if (rightValue.value == 0) {
-                //  throw new Error_(this.line, this.column, "Semantico", "No se puede dividir entre 0");
+                //TODO  throw new Error_(this.line, this.column, "Semantico", "No se puede dividir entre 0");
             }
             result = { value: (leftValue.value / rightValue.value), type: Retorno_js_1.Type.NUMBER };
         }

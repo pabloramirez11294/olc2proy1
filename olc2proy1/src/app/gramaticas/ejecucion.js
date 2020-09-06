@@ -221,12 +221,12 @@ case 34:
 break;
 case 35:
 
-         this.$ = new Literal($$[$0], _$[$0].first_line, _$[$0].first_column, Type.BOOLEAN);
+         this.$ = new Literal(true, _$[$0].first_line, _$[$0].first_column, Type.BOOLEAN);
     
 break;
 case 36:
 
-        this.$ = new Literal($$[$0], _$[$0].first_line, _$[$0].first_column, Type.BOOLEAN);
+        this.$ = new Literal(false, _$[$0].first_line, _$[$0].first_column, Type.BOOLEAN);
     
 break;
 case 37:

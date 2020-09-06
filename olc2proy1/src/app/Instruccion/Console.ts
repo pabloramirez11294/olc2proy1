@@ -10,7 +10,6 @@ export class Console extends Instruction{
     constructor(private value : Expression, line : number, column : number){
         super(line, column);
     }
-    consola;
     public execute(environment : Environment) {
         const value = this.value.execute(environment);
         console.log(value);
