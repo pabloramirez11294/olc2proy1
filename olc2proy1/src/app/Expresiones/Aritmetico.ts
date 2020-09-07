@@ -33,7 +33,7 @@ export class Aritmetico extends Expression{
         }
         else if(this.type == ArithmeticOption.RESTA){
             if(tipoDominante == Type.STRING)
-                throw new Error_(this.line, this.column, 'Semantico', 'No se puede restar: ' + leftValue.type + ' con ' + rightValue.type,"");
+                throw new Error_(this.line, this.column, 'Semantico', 'No se puede restar: ' + leftValue.type + ' con ' + rightValue.type,environment.getNombre());
             result = {value : (leftValue.value - rightValue.value), type : Type.NUMBER};
         }
         else if(this.type == ArithmeticOption.MULT){
@@ -41,7 +41,7 @@ export class Aritmetico extends Expression{
         }
         else{
             if(rightValue.value == 0){
-              //TODO  throw new Error_(this.line, this.column, "Semantico", "No se puede dividir entre 0");
+                throw new Error_(this.line, this.column, 'Semantico', 'No se puede dividir entre 0',environment.getNombre());
             }
             result = {value : (leftValue.value / rightValue.value), type : Type.NUMBER};
         }

@@ -21,7 +21,7 @@ var ArithmeticOption;
 (function (ArithmeticOption) {
     ArithmeticOption[ArithmeticOption["SUMA"] = 0] = "SUMA";
     ArithmeticOption[ArithmeticOption["RESTA"] = 1] = "RESTA";
-    ArithmeticOption[ArithmeticOption["MULTI"] = 2] = "MULTI";
+    ArithmeticOption[ArithmeticOption["MULT"] = 2] = "MULT";
     ArithmeticOption[ArithmeticOption["DIV"] = 3] = "DIV";
 })(ArithmeticOption = exports.ArithmeticOption || (exports.ArithmeticOption = {}));
 var Aritmetico = /** @class */ (function (_super) {
@@ -48,15 +48,15 @@ var Aritmetico = /** @class */ (function (_super) {
         }
         else if (this.type == ArithmeticOption.RESTA) {
             if (tipoDominante == Retorno_js_1.Type.STRING)
-                throw new Errores_js_1.Error_(this.line, this.column, 'Semantico', 'No se puede restar: ' + leftValue.type + ' con ' + rightValue.type, "");
+                throw new Errores_js_1.Error_(this.line, this.column, 'Semantico', 'No se puede restar: ' + leftValue.type + ' con ' + rightValue.type, environment.getNombre());
             result = { value: (leftValue.value - rightValue.value), type: Retorno_js_1.Type.NUMBER };
         }
-        else if (this.type == ArithmeticOption.MULTI) {
+        else if (this.type == ArithmeticOption.MULT) {
             result = { value: (leftValue.value * rightValue.value), type: Retorno_js_1.Type.NUMBER };
         }
         else {
             if (rightValue.value == 0) {
-                //TODO  throw new Error_(this.line, this.column, "Semantico", "No se puede dividir entre 0");
+                throw new Errores_js_1.Error_(this.line, this.column, 'Semantico', 'No se puede dividir entre 0', environment.getNombre());
             }
             result = { value: (leftValue.value / rightValue.value), type: Retorno_js_1.Type.NUMBER };
         }

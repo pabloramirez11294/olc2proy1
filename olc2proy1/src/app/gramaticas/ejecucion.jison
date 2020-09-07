@@ -4,6 +4,7 @@
     const {Relacional, RelationalOption} = require('../Expresiones/Relacional.js');
     const {Literal} = require('../Expresiones/Literal.js');
     const {Variable} = require('../Expresiones/Variable.js');
+    const {Unario,OperadorOpcion} = require('../Expresiones/Unario.js');
     const {Console} = require('../Instruccion/Console.js');
     const {errores,Error_} = require('../Reportes/Errores.js');
     const { Type } = require("../Modelos/Retorno.js");
@@ -41,15 +42,14 @@ string  (\"[^"]*\")
 "else"                  return 'ELSE'
 
 
-
+"++"                    return '++'
+"--"                    return '--'
 "+"                   return '+'
 "-"                   return '-'
 "**"                    return '**'
 "*"                   return '*'
 "/"                   return '/'
 "%"                     return '%'
-"++"                    return '++'
-"--"                    return '--'
 ">="                    return '>='
 "<="                    return '<='
 ">"                     return '>'
@@ -113,6 +113,7 @@ Instruc
             $$ = $1;
         }
         | Declaracion {$$ = $1;}
+        | Unario ';' {$$ = $1;}
         | error 
         { 
             //console.error('Este es un error sintáctico: ' + yytext + ', en la linea: ' + this._$.first_line + ', en la columna: ' + this._$.first_column); 
@@ -212,6 +213,7 @@ Exp
     {
         $$ = $2;
     }
+    | Unario { $$ = $1}
     | F
     {
         $$ = $1;
@@ -240,16 +242,24 @@ F
     {
         $$ = new Variable($1,@1.first_line, @1.first_column);
     }
-    | ID '++'
-    | ID '--'
     | ID '.' LlamadaTypes
+;
+
+Unario 
+    : ID '++'
+    {
+        $$ = new Unario($1,OperadorOpcion.INCRE,@1.first_line, @1.first_column);
+    }
+    | ID '--'    
+    {
+        $$ = new Unario($1,OperadorOpcion.DECRE,@1.first_line, @1.first_column);
+    }
     /*TODO terminar operador unario -
     |'-' Exp %prec MENOS	
     {
        // $$ = new Aritmetico(null, $2, ArithmeticOption.MINUS, @1.first_line,@1.first_column);
     }*/
 ;
-
 
 
 

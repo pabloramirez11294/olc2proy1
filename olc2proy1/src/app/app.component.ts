@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import Ejecucion from './gramaticas/ejecucion.js';
 import {  Error_ } from './Reportes/Errores.js';
 import { Environment } from './Entornos/Environment.js';
+import {Unario} from './Expresiones/Unario.js';
 localStorage.setItem('CONSOLA', '');
 
 @Component({
@@ -34,7 +35,7 @@ export class AppComponent {
         try {          
           const actual = instr.execute(entorno);
           this.setConsola();
-          if (actual != null || actual != undefined) {
+          if ((actual != null || actual != undefined)&& instr.__proto__.constructor.name!= Unario.name) {
             errores.push(new Error_(actual.line,actual.column,'Semantico',actual.type + ' fuera de un ciclo',''));
           }         
         } catch (error) {
