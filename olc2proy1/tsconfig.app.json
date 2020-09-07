@@ -13,6 +13,10 @@
   ],
   "include": [
     "src/**/*.d.ts",
-    "src/app/**/*.ts"
+    "src/app/Entornos/*.ts",
+    "src/app/Expresiones/*.ts",
+    "src/app/Instruccion/*.ts",
+    "src/app/Modelos/*.ts",
+    "src/app/Reportes/*.ts"
   ]
 }
