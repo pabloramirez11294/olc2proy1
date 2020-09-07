@@ -1,6 +1,6 @@
 
-import { Type } from "../Modelos/Retorno.js";
-import {Error_} from '../Reportes/Errores.js';
+import { Type } from "../Modelos/Retorno";
+import {Error_} from '../Reportes/Errores';
 export class Simbolo{
     public valor :any;
     public id : string;

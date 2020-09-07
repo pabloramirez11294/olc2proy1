@@ -1,15 +1,15 @@
  
 %{
-    const { ArithmeticOption,Aritmetico} = require('../Expresiones/Aritmetico.js');
-    const {Relacional, RelationalOption} = require('../Expresiones/Relacional.js');
-    const {Literal} = require('../Expresiones/Literal.js');
-    const {Variable} = require('../Expresiones/Variable.js');
-    const {Unario,OperadorOpcion} = require('../Expresiones/Unario.js');
-    const {Console} = require('../Instruccion/Console.js');
-    const {errores,Error_} = require('../Reportes/Errores.js');
-    const { Type } = require("../Modelos/Retorno.js");
-    const {If} = require('../Instruccion/If.js');
-    const {Declaracion} = require('../Instruccion/Declaracion.js');
+    const { ArithmeticOption,Aritmetico} = require('../Expresiones/Aritmetico');
+    const {Relacional, RelationalOption} = require('../Expresiones/Relacional');
+    const {Literal} = require('../Expresiones/Literal');
+    const {Variable} = require('../Expresiones/Variable');
+    const {Unario,OperadorOpcion} = require('../Expresiones/Unario');
+    const {Console} = require('../Instruccion/Console');
+    const {errores,Error_} = require('../Reportes/Errores');
+    const { Type } = require("../Modelos/Retorno");
+    const {If} = require('../Instruccion/If');
+    const {Declaracion} = require('../Instruccion/Declaracion');
 %}
 
 %lex

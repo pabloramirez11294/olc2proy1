@@ -1,6 +1,6 @@
-import { Expression } from "../Modelos/Expression.js";
-import { Retorno, Type } from "../Modelos/Retorno.js";
-import { Environment } from "../Entornos/Environment.js";
+import { Expression } from "../Modelos/Expression";
+import { Retorno, Type } from "../Modelos/Retorno";
+import { Environment } from "../Entornos/Environment";
 export enum RelationalOption{
     MENOR,
     MAYOR,

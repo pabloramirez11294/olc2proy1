@@ -1,6 +1,6 @@
-import { Instruction } from "../Modelos/Instruction.js";
-import { Expression } from "../Modelos/Expression.js";
-import { Environment } from "../Entornos/Environment.js";
+import { Instruction } from "../Modelos/Instruction";
+import { Expression } from "../Modelos/Expression";
+import { Environment } from "../Entornos/Environment";
 
 
 

@@ -1,5 +1,5 @@
-import { Expression } from "../Modelos/Expression.js";
-import { Retorno, Type } from "../Modelos/Retorno.js";
+import { Expression } from "../Modelos/Expression";
+import { Retorno, Type } from "../Modelos/Retorno";
 
 export class Literal extends Expression{
     

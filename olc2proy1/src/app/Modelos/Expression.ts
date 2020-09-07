@@ -1,6 +1,6 @@
-import { Retorno, Type } from "./Retorno.js";
-import { Environment } from "../Entornos/Environment.js";
-import {errores,Error_} from '../Reportes/Errores.js';
+import { Retorno, Type } from "./Retorno";
+import { Environment } from "../Entornos/Environment";
+import {errores,Error_} from '../Reportes/Errores';
 export abstract class Expression {
 
     public line: number;

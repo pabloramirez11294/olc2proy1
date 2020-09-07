@@ -1,8 +1,8 @@
-import { Expression } from "../Modelos/Expression.js";
-import { Instruction } from "../Modelos/Instruction.js";
-import { Environment, Simbolo } from "../Entornos/Environment.js";
-import {Type} from "../Modelos/Retorno.js";
-import {Error_} from '../Reportes/Errores.js';
+import { Expression } from "../Modelos/Expression";
+import { Instruction } from "../Modelos/Instruction";
+import { Environment, Simbolo } from "../Entornos/Environment";
+import {Type} from "../Modelos/Retorno";
+import {Error_} from '../Reportes/Errores';
 export class Declaracion extends Instruction{
 
 

@@ -1,4 +1,4 @@
-import { Environment } from "../Entornos/Environment.js";
+import { Environment } from "../Entornos/Environment";
 
 export abstract class Instruction {
 

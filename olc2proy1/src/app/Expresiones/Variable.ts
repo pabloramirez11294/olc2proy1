@@ -1,7 +1,7 @@
-import {Error_} from '../Reportes/Errores.js';
-import { Expression } from "../Modelos/Expression.js";
-import { Retorno } from "../Modelos/Retorno.js";
-import { Environment } from "../Entornos/Environment.js";
+import {Error_} from '../Reportes/Errores';
+import { Expression } from "../Modelos/Expression";
+import { Retorno } from "../Modelos/Retorno";
+import { Environment } from "../Entornos/Environment";
 
 export class Variable extends Expression{
 

@@ -1,8 +1,8 @@
-import { Instruction } from "../Modelos/Instruction.js";
-import { Expression } from "../Modelos/Expression.js";
-import { Environment } from "../Entornos/Environment.js";
-import { Type } from "../Modelos/Retorno.js";
-import {Error_} from '../Reportes/Errores.js';
+import { Instruction } from "../Modelos/Instruction";
+import { Expression } from "../Modelos/Expression";
+import { Environment } from "../Entornos/Environment";
+import { Type } from "../Modelos/Retorno";
+import {Error_} from '../Reportes/Errores';
 export class If extends Instruction{
 
     constructor(private condicion : Expression, private codeIF : Instruction, private codeElse : Instruction | null,

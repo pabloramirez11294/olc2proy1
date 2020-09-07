@@ -1,7 +1,7 @@
-import { Expression } from "../Modelos/Expression.js";
-import { Retorno, Type } from "../Modelos/Retorno.js";
-import { Environment } from "../Entornos/Environment.js";
-import {Error_} from '../Reportes/Errores.js';
+import { Expression } from "../Modelos/Expression";
+import { Retorno, Type } from "../Modelos/Retorno";
+import { Environment } from "../Entornos/Environment";
+import {Error_} from '../Reportes/Errores';
 export enum ArithmeticOption{
     SUMA,
     RESTA,
