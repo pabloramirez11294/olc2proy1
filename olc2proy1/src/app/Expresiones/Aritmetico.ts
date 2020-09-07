@@ -3,9 +3,9 @@ import { Retorno, Type } from "../Modelos/Retorno.js";
 import { Environment } from "../Entornos/Environment.js";
 import {Error_} from '../Reportes/Errores.js';
 export enum ArithmeticOption{
-    PLUS,
-    MINUS,
-    TIMES,
+    SUMA,
+    RESTA,
+    MULT,
     DIV
 }
 
@@ -21,7 +21,7 @@ export class Aritmetico extends Expression{
         let result : Retorno;
         const tipoDominante = this.tipoDominante(leftValue.type, rightValue.type);
         
-        if(this.type == ArithmeticOption.PLUS){
+        if(this.type == ArithmeticOption.SUMA){
             if(tipoDominante == Type.STRING)
                 result = {value : (leftValue.value.toString() + rightValue.value.toString()), type : Type.STRING};
             else if(tipoDominante == Type.NUMBER)
@@ -31,12 +31,12 @@ export class Aritmetico extends Expression{
             
             
         }
-        else if(this.type == ArithmeticOption.MINUS){
+        else if(this.type == ArithmeticOption.RESTA){
             if(tipoDominante == Type.STRING)
                 throw new Error_(this.line, this.column, 'Semantico', 'No se puede restar: ' + leftValue.type + ' con ' + rightValue.type,"");
             result = {value : (leftValue.value - rightValue.value), type : Type.NUMBER};
         }
-        else if(this.type == ArithmeticOption.TIMES){
+        else if(this.type == ArithmeticOption.MULT){
             result = {value : (leftValue.value * rightValue.value), type : Type.NUMBER};
         }
         else{

@@ -19,9 +19,9 @@ var Retorno_js_1 = require("../Modelos/Retorno.js");
 var Errores_js_1 = require("../Reportes/Errores.js");
 var ArithmeticOption;
 (function (ArithmeticOption) {
-    ArithmeticOption[ArithmeticOption["PLUS"] = 0] = "PLUS";
-    ArithmeticOption[ArithmeticOption["MINUS"] = 1] = "MINUS";
-    ArithmeticOption[ArithmeticOption["TIMES"] = 2] = "TIMES";
+    ArithmeticOption[ArithmeticOption["SUMA"] = 0] = "SUMA";
+    ArithmeticOption[ArithmeticOption["RESTA"] = 1] = "RESTA";
+    ArithmeticOption[ArithmeticOption["MULTI"] = 2] = "MULTI";
     ArithmeticOption[ArithmeticOption["DIV"] = 3] = "DIV";
 })(ArithmeticOption = exports.ArithmeticOption || (exports.ArithmeticOption = {}));
 var Aritmetico = /** @class */ (function (_super) {
@@ -38,7 +38,7 @@ var Aritmetico = /** @class */ (function (_super) {
         var rightValue = this.right.execute(environment);
         var result;
         var tipoDominante = this.tipoDominante(leftValue.type, rightValue.type);
-        if (this.type == ArithmeticOption.PLUS) {
+        if (this.type == ArithmeticOption.SUMA) {
             if (tipoDominante == Retorno_js_1.Type.STRING)
                 result = { value: (leftValue.value.toString() + rightValue.value.toString()), type: Retorno_js_1.Type.STRING };
             else if (tipoDominante == Retorno_js_1.Type.NUMBER)
@@ -46,12 +46,12 @@ var Aritmetico = /** @class */ (function (_super) {
             else
                 throw new Errores_js_1.Error_(this.line, this.column, "Semantico", "Error no se pueden sumar :" + leftValue.type + " y " + rightValue.type, environment.getNombre());
         }
-        else if (this.type == ArithmeticOption.MINUS) {
+        else if (this.type == ArithmeticOption.RESTA) {
             if (tipoDominante == Retorno_js_1.Type.STRING)
                 throw new Errores_js_1.Error_(this.line, this.column, 'Semantico', 'No se puede restar: ' + leftValue.type + ' con ' + rightValue.type, "");
             result = { value: (leftValue.value - rightValue.value), type: Retorno_js_1.Type.NUMBER };
         }
-        else if (this.type == ArithmeticOption.TIMES) {
+        else if (this.type == ArithmeticOption.MULTI) {
             result = { value: (leftValue.value * rightValue.value), type: Retorno_js_1.Type.NUMBER };
         }
         else {

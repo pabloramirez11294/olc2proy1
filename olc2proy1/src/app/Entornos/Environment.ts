@@ -1,5 +1,6 @@
 
 import { Type } from "../Modelos/Retorno.js";
+import {Error_} from '../Reportes/Errores.js';
 export class Simbolo{
     public valor :any;
     public id : string;
@@ -27,8 +28,24 @@ export class Environment{
         this.nombre=nombre;
     }
 
-    public guardar(id: string, valor: any, type: Type){
+    public guardar(id: string, valor: any, type: Type,linea:number,columna:number){
+        if(this.variables.has(id))
+            throw new Error_(linea, columna, 'Semantico',
+            'DECLARACION: ya existe la variable: '+id ,this.getNombre());
+    
         this.variables.set(id, new Simbolo(valor, id, type));
+    }
+    //para el tipo       nombVar = exp;
+    public asignar(id: string, valor: any,type: Type,linea:number,columna:number){
+        if(!this.variables.has(id))
+            throw new Error_(linea, columna, 'Semantico','ASIGNACIÓN: no existe la variable:' + id,this.getNombre());
+        
+        const sim:Simbolo = this.getVar(id); 
+        if(type!= sim.tipo)
+            throw new Error_(linea, columna,  'Semantico',
+                'ASIGNACIÓN: no coincide el tipo con el valor asginado, Tipovalor:' + type+", tipo: "+sim.tipo ,this.getNombre());
+        sim.valor=valor;
+        this.variables.set(id,sim);
     }
     
     public getVar(id: string) : Simbolo | undefined | null{

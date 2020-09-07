@@ -27,6 +27,8 @@ var Variable = /** @class */ (function (_super) {
         var id = amb.getVar(this.id);
         if (id == null)
             throw new Errores_js_1.Error_(this.line, this.column, 'Semantico', 'VARIABLE: no existe la variable:' + this.id, amb.getNombre());
+        if (id.valor == undefined)
+            throw new Errores_js_1.Error_(this.line, this.column, 'Semantico', 'VARIABLE: no tiene valor asignado:' + this.id, amb.getNombre());
         return { value: id.valor, type: id.tipo };
     };
     return Variable;

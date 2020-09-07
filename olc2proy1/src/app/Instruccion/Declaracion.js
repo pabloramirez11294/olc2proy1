@@ -25,13 +25,21 @@ var Declaracion = /** @class */ (function (_super) {
         _this.exp = exp;
         return _this;
     }
-    Declaracion.prototype.execute = function (environment) {
-        var valor = this.exp.execute(environment);
-        //TODO colocar el ambito
-        if (valor.type != this.tipo) {
-            throw new Errores_js_1.Error_(this.line, this.column, 'Semantico', 'DECLARACION: no coincide el tipo con el valor, valor:' + valor.value + ", tipo: " + this.tipo, "");
+    Declaracion.prototype.execute = function (amb) {
+        if (this.exp == undefined) {
+            amb.guardar(this.id, undefined, this.tipo, this.line, this.column);
         }
-        environment.guardar(this.id, valor.value, this.tipo);
+        else if (this.tipo == undefined) {
+            var valor = this.exp.execute(amb);
+            amb.asignar(this.id, valor.value, valor.type, this.line, this.column);
+        }
+        else {
+            var valor = this.exp.execute(amb);
+            if (valor.type != this.tipo) {
+                throw new Errores_js_1.Error_(this.line, this.column, 'Semantico', 'DECLARACION: no coincide el tipo con el valor, valor:' + valor.value + ", tipo: " + this.tipo, amb.getNombre());
+            }
+            amb.guardar(this.id, valor.value, this.tipo, this.line, this.column);
+        }
     };
     return Declaracion;
 }(Instruction_js_1.Instruction));

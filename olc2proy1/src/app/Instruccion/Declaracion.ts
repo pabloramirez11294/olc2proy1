@@ -1,6 +1,6 @@
 import { Expression } from "../Modelos/Expression.js";
 import { Instruction } from "../Modelos/Instruction.js";
-import { Environment } from "../Entornos/Environment.js";
+import { Environment, Simbolo } from "../Entornos/Environment.js";
 import {Type} from "../Modelos/Retorno.js";
 import {Error_} from '../Reportes/Errores.js';
 export class Declaracion extends Instruction{
@@ -11,11 +11,20 @@ export class Declaracion extends Instruction{
         super(line, column);
     }
 
-    public execute(environment: Environment) {
-        const valor = this.exp.execute(environment);
-        //TODO colocar el ambito
-        if(valor.type != this.tipo){
-            throw new Error_(this.line, this.column, 'Semantico', 'DECLARACION: no coincide el tipo con el valor, valor:' + valor.value+", tipo: "+this.tipo ,"");        }
-        environment.guardar(this.id, valor.value, this.tipo);
+    public execute(amb: Environment) {
+        if(this.exp == undefined){
+            amb.guardar(this.id,undefined,this.tipo ,this.line,this.column);
+        }else if(this.tipo==undefined){
+            const valor = this.exp.execute(amb);                         
+            amb.asignar(this.id ,valor.value,valor.type,this.line,this.column);
+        }else{
+            const valor = this.exp.execute(amb);
+            if(valor.type != this.tipo){
+                throw new Error_(this.line, this.column, 'Semantico',
+                'DECLARACION: no coincide el tipo con el valor, valor:' + valor.value+", tipo: "+this.tipo ,amb.getNombre());
+            }
+            amb.guardar(this.id, valor.value, this.tipo,this.line,this.column);
+        }
+
     }
 }

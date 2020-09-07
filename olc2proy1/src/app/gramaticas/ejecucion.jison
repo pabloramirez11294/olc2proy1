@@ -148,6 +148,13 @@ Declaracion
                 $$ = new Declaracion($2,$4,$6, @1.first_line, @1.first_column);
             }
             | 'LET' ID ':' Tipo ';'
+            {
+                $$ = new Declaracion($2,$4,undefined, @1.first_line, @1.first_column);
+            }
+            | ID '=' Exp ';'
+            {
+                $$ = new Declaracion($1,undefined,$3, @1.first_line, @1.first_column);
+            }
             | 'CONST' ID ':' Tipo '=' Exp ';' 
 ;
 
@@ -163,15 +170,15 @@ Tipo
 Exp
     : Exp '+' Exp
     {
-        $$ = new Aritmetico($1, $3, ArithmeticOption.PLUS, @1.first_line,@1.first_column);
+        $$ = new Aritmetico($1, $3, ArithmeticOption.SUMA, @1.first_line,@1.first_column);
     }       
     | Exp '-' Exp
     {
-        $$ = new Aritmetico($1, $3, ArithmeticOption.MINUS, @1.first_line,@1.first_column);
+        $$ = new Aritmetico($1, $3, ArithmeticOption.RESTA, @1.first_line,@1.first_column);
     }
     | Exp '*' Exp
     { 
-        $$ = new Aritmetico($1, $3, ArithmeticOption.TIMES, @1.first_line,@1.first_column);
+        $$ = new Aritmetico($1, $3, ArithmeticOption.MULT, @1.first_line,@1.first_column);
     }       
     | Exp '/' Exp
     {
