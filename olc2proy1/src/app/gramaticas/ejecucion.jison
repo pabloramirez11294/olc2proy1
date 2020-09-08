@@ -10,6 +10,10 @@
     const { Type } = require("../Modelos/Retorno");
     const {If} = require('../Instruccion/If');
     const {Declaracion} = require('../Instruccion/Declaracion');
+    const {Break,Continue,TipoEscape} = require('../Instruccion/BreakContinue');
+    const {While} = require('../Instruccion/While');
+    const {Instrucciones} = require('../Instruccion/Instrucciones');
+    const {InstrucUnaria} = require('../Instruccion/InstrucUnaria');
 %}
 
 %lex
@@ -37,9 +41,12 @@ string  (\"[^"]*\")
 "let"                  return 'LET'
 "const"                 return 'CONST'
 "console.log"           return 'CONSOLE'
-//sentenicas de control
+//sentenicas de control y ciclos
 "if"                    return 'IF'
 "else"                  return 'ELSE'
+"while"                 return 'WHILE'
+"break"                 return 'BREAK'
+"continue"              return 'CONTINUE'
 
 
 "++"                    return '++'
@@ -87,14 +94,14 @@ string  (\"[^"]*\")
 %%
 
 Init    
-    : Cont EOF 
+    : Instrucciones EOF 
     {
         return $1;
     }
 ;
 
-Cont
-    : Cont Instruc  
+Instrucciones
+    : Instrucciones Instruc  
     {
         $1.push($2);
         $$ = $1;
@@ -112,18 +119,24 @@ Instruc
         | Sentencia_if {
             $$ = $1;
         }
+        | 'WHILE' '(' Exp ')' InstruccionesSent 
+        {
+            $$ = new While($3,$5, @1.first_line, @1.first_column);
+        }
+        | 'BREAK' ';' { $$ = new Break(@1.first_line, @1.first_column); }
+        | 'CONTINUE' ';'  { $$ = new Continue(@1.first_line, @1.first_column); }
         | Declaracion {$$ = $1;}
-        | Unario ';' {$$ = $1;}
+        | Unario ';' {$$ = new InstrucUnaria($1,@1.first_line, @1.first_column);}
         | error 
         { 
             //console.error('Este es un error sintáctico: ' + yytext + ', en la linea: ' + this._$.first_line + ', en la columna: ' + this._$.first_column); 
-            $$ =new Error_(this._$.first_line , this._$.first_column, 'Sintáctico',yytext,'');
+            throw new Error_(this._$.first_line , this._$.first_column, 'Sintáctico',yytext,'');
         }
 
 ;
 //*********************SENTENCIAS DE CONTROL
 Sentencia_if
-            : 'IF' '(' Exp ')' Instrucciones Sentencia_else
+            : 'IF' '(' Exp ')' InstruccionesSent Sentencia_else
             {
                 $$ = new If($3, $5, $6, @1.first_line, @1.first_column);
             }
@@ -131,13 +144,18 @@ Sentencia_if
 
 Sentencia_else
                 : 'ELSE' Sentencia_if { $$ = $2;}
-                | 'ELSE' Instrucciones { $$ = $2;}
+                | 'ELSE' InstruccionesSent { $$ = $2;}
                 |  { $$ = null;}
 ;
 
-Instrucciones
-    : '{' Instruc '}' {$$ = $2;}
-    | '{' '}' { $$ = null;}
+InstruccionesSent
+    : '{' Instrucciones '}' 
+    {
+        $$ = new Instrucciones($2, @1.first_line, @1.first_column);
+    }
+    | '{' '}' {
+        $$ = new Instrucciones(new Array(), @1.first_line, @1.first_column);
+    }
 ;
 
 

@@ -2,7 +2,6 @@ import { Component } from '@angular/core';
 import Ejecucion from './gramaticas/ejecucion';
 import {  Error_ } from './Reportes/Errores';
 import { Environment } from './Entornos/Environment';
-import {Unario} from './Expresiones/Unario';
 localStorage.setItem('CONSOLA', '');
 
 @Component({
@@ -29,13 +28,13 @@ export class AppComponent {
     let errores = new Array<Error_>();
     const entorno = new Environment(null, 'global');
     try {
-      const value = Ejecucion.parse(this.editor);
+      const instrucciones = Ejecucion.parse(this.editor);
 
-      for (const instr of value) {
+      for (const instruc of instrucciones) {
         try {          
-          const actual = instr.execute(entorno);
+          const actual = instruc.execute(entorno);
           this.setConsola();
-          if ((actual != null || actual != undefined)&& instr.__proto__.constructor.name!= Unario.name) {
+          if (actual != null || actual != undefined) {
             errores.push(new Error_(actual.line,actual.column,'Semantico',actual.type + ' fuera de un ciclo',''));
           }         
         } catch (error) {
@@ -50,8 +49,11 @@ export class AppComponent {
       }
     } catch (error) {
       //console.log(error)
-      errores.push(new Error_(error.lineNumber, 0, 'Lexico', error.message, 'global')
-      );
+      if(error.ambito!=null){
+        error.ambito='';
+        errores.push(error);  
+      }else
+        errores.push(new Error_(error.lineNumber, 0, 'Lexico', error.message, ''));
     }
     console.log('Tabla de Simbolos: ', entorno.getTablaSimbolos());
     console.log('Reporte errores:', errores);
@@ -59,5 +61,16 @@ export class AppComponent {
 
   setConsola() {
     this.consola = localStorage.getItem('CONSOLA');
+  }
+
+  limpiar(){
+    if(localStorage.getItem('CONSOLA')==undefined){
+      this.editor='';
+      this.consola='';
+      return null;
+    }
+    localStorage.setItem('CONSOLA',"");
+    this.editor='';
+    this.consola='';
   }
 }
