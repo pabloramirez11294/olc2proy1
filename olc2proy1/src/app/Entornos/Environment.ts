@@ -1,6 +1,7 @@
 
 import { Type } from "../Modelos/Retorno";
 import {Error_} from '../Reportes/Errores';
+import {Funcion} from '../Instruccion/Funcion';
 export class Simbolo{
     public valor :any;
     public id : string;
@@ -13,11 +14,12 @@ export class Simbolo{
     }
 }
 export class Environment{
-    
+    private funciones : Map<string, Funcion>;
     private variables : Map<string, Simbolo>;
     
     constructor(public anterior : Environment | null,private nombre:string){
-        this.variables = new Map();        
+        this.variables = new Map();  
+        this.funciones = new Map();      
         this.nombre = nombre;
     }
 
@@ -66,5 +68,23 @@ export class Environment{
     public getTablaSimbolos():Map<string, Simbolo>{
         return this.variables;
     }
+
+    public guardarFuncion(id: string, funcion : Funcion){
+        //TODO ver si la funcion ya existe, reportar error
+        this.funciones.set(id, funcion);
+    }
+    public getFunciones():Map<string, Funcion>{
+        return this.funciones;
+    }
+
+
+    public getGlobal() : Environment{
+        let env : Environment | null = this;
+        while(env?.anterior != null){
+            env = env.anterior;
+        }
+        return env;
+    }
+
     
 }

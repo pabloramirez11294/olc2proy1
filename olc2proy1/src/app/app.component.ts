@@ -25,6 +25,7 @@ export class AppComponent {
   consola = '';
 
   ejecutar() {
+    errores.length=0;
     const entorno = new Environment(null, 'global');
     try {
       const instrucciones = Ejecucion.parse(this.editor);
@@ -47,7 +48,7 @@ export class AppComponent {
         }
       }
     } catch (error) {
-      //console.log(error)
+      console.log(error)
       if(error.ambito!=null){
         error.ambito='';
         errores.push(error);  
@@ -55,6 +56,7 @@ export class AppComponent {
         errores.push(new Error_(error.lineNumber, 0, 'Lexico', error.message, ''));
     }
     console.log('Tabla de Simbolos: ', entorno.getTablaSimbolos());
+    console.log('Funciones: ', entorno.getFunciones());
     console.log('Reporte errores:', errores);
   }
 

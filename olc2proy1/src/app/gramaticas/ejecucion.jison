@@ -15,6 +15,8 @@
     const {For} = require('../Instruccion/For');
     const {Instrucciones} = require('../Instruccion/Instrucciones');
     const {InstrucUnaria} = require('../Instruccion/InstrucUnaria');
+    const {Funcion} = require('../Instruccion/Funcion');
+    const {Simbolo} = require('../Entornos/Environment');
 %}
 
 %lex
@@ -49,6 +51,7 @@ string  (\"[^"]*\")
 "break"                 return 'BREAK'
 "continue"              return 'CONTINUE'
 "for"                   return 'FOR'
+"function"              return 'FUNCTION'
 
 
 "++"                    return '++'
@@ -103,14 +106,43 @@ Init
 ;
 
 Instrucciones
-    : Instrucciones Instruc  
+    : Instrucciones Cont  
     {
         $1.push($2);
         $$ = $1;
     }
-    | Instruc{
+    | Cont{
         $$ = [$1];
     }
+;
+
+
+Cont
+    : Instruc { $$ = $1; }
+    | Funciones { $$ = $1; }
+;
+
+Funciones
+        : 'FUNCTION' ID '(' Parametros ')' ':' Tipo InstruccionesSent
+        {
+            $$ = new Funcion($2,$4,$7,$8,@1.first_line, @1.first_column);
+        }
+        | 'FUNCTION' ID '(' ')' ':' Tipo InstruccionesSent  
+        {
+            $$ = new Funcion($2, [],$6,$7 , @1.first_line, @1.first_column);
+        }
+;
+
+Parametros
+        : Parametros ',' ID ':' Tipo 
+        {
+            $1.push(new Simbolo(undefined,$3,$5));
+            $$ = $1;
+        }
+        | ID ':' Tipo 
+        {
+            $$ = [new Simbolo(undefined,$1,$3)];
+        }
 ;
 
 Instruc

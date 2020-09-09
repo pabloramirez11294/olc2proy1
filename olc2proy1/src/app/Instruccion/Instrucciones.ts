@@ -3,12 +3,12 @@ import { Environment } from "../Entornos/Environment";
 import { errores } from "../Reportes/Errores";
 export class Instrucciones extends Instruction{
 
-    constructor(private code : Array<Instruction>,private nombre:string ,line : number, column : number){
+    constructor(private code : Array<Instruction> ,line : number, column : number){
         super(line, column);
     }
 
     public execute(env : Environment) {
-        const newEnv = new Environment(env,this.nombre);
+        const newEnv = new Environment(env,env.getNombre());
         for(const instr of this.code){
             const i:any=instr;
             try {
