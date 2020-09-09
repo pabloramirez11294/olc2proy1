@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import Ejecucion from './gramaticas/ejecucion';
-import {  Error_ } from './Reportes/Errores';
+import {  Error_ ,errores} from './Reportes/Errores';
 import { Environment } from './Entornos/Environment';
 localStorage.setItem('CONSOLA', '');
 
@@ -25,7 +25,6 @@ export class AppComponent {
   consola = '';
 
   ejecutar() {
-    let errores = new Array<Error_>();
     const entorno = new Environment(null, 'global');
     try {
       const instrucciones = Ejecucion.parse(this.editor);

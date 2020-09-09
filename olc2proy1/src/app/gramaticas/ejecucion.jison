@@ -12,6 +12,7 @@
     const {Declaracion} = require('../Instruccion/Declaracion');
     const {Break,Continue,TipoEscape} = require('../Instruccion/BreakContinue');
     const {While} = require('../Instruccion/While');
+    const {For} = require('../Instruccion/For');
     const {Instrucciones} = require('../Instruccion/Instrucciones');
     const {InstrucUnaria} = require('../Instruccion/InstrucUnaria');
 %}
@@ -47,6 +48,7 @@ string  (\"[^"]*\")
 "while"                 return 'WHILE'
 "break"                 return 'BREAK'
 "continue"              return 'CONTINUE'
+"for"                   return 'FOR'
 
 
 "++"                    return '++'
@@ -119,6 +121,10 @@ Instruc
         | Sentencia_if {
             $$ = $1;
         }
+        | 'FOR' '(' Declaracion Exp ';' Actualizacion ')' InstruccionesSent
+        {
+            $$ = new For($3,$4,$6, $8,@1.first_line, @1.first_column);
+        }
         | 'WHILE' '(' Exp ')' InstruccionesSent 
         {
             $$ = new While($3,$5, @1.first_line, @1.first_column);
@@ -157,6 +163,14 @@ InstruccionesSent
         $$ = new Instrucciones(new Array(), @1.first_line, @1.first_column);
     }
 ;
+//*********************** CICLOS
+Actualizacion
+            : Unario { $$ = $1; }
+            | ID '=' Exp ';'
+            {
+                $$ = new Declaracion($1,undefined,$3,true, @1.first_line, @1.first_column);
+            }
+;
 
 
 //*********************** DECLARACION DE VARIABLES
@@ -164,15 +178,23 @@ InstruccionesSent
 Declaracion
             : 'LET' ID ':' Tipo '=' Exp ';'
             {
-                $$ = new Declaracion($2,$4,$6, @1.first_line, @1.first_column);
+                $$ = new Declaracion($2,$4,$6,false, @1.first_line, @1.first_column);
             }
             | 'LET' ID ':' Tipo ';'
             {
-                $$ = new Declaracion($2,$4,undefined, @1.first_line, @1.first_column);
+                $$ = new Declaracion($2,$4,undefined,false, @1.first_line, @1.first_column);
+            }
+            | 'LET' ID  ';'
+            {
+                $$ = new Declaracion($2,undefined,undefined,false, @1.first_line, @1.first_column);
+            }
+            | 'LET' ID '=' Exp ';'
+            {
+                $$ = new Declaracion($2,undefined,$4,false, @1.first_line, @1.first_column);
             }
             | ID '=' Exp ';'
             {
-                $$ = new Declaracion($1,undefined,$3, @1.first_line, @1.first_column);
+                $$ = new Declaracion($1,undefined,$3,true, @1.first_line, @1.first_column);
             }
             | 'CONST' ID ':' Tipo '=' Exp ';' 
 ;

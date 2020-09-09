@@ -37,13 +37,17 @@ export class Environment{
     }
     //para el tipo       nombVar = exp;
     public asignar(id: string, valor: any,type: Type,linea:number,columna:number){
-        if(!this.variables.has(id))
+        const sim:Simbolo = this.getVar(id); 
+        if(sim==null)
             throw new Error_(linea, columna, 'Semantico','ASIGNACIÓN: no existe la variable:' + id,this.getNombre());
         
-        const sim:Simbolo = this.getVar(id); 
+        
+        if(sim.tipo==undefined){
+            sim.tipo=type;
+        }
         if(type!= sim.tipo)
             throw new Error_(linea, columna,  'Semantico',
-                'ASIGNACIÓN: no coincide el tipo con el valor asginado, Tipovalor:' + type+", tipo: "+sim.tipo ,this.getNombre());
+                'ASIGNACIÓN: no coincide el tipo con el valor asginado, Tipovalor:' + type+", tipo: "+sim.tipo ,this.getNombre());        
         sim.valor=valor;
         this.variables.set(id,sim);
     }
