@@ -5,6 +5,7 @@
     const {Literal} = require('../Expresiones/Literal');
     const {Variable} = require('../Expresiones/Variable');
     const {Unario,OperadorOpcion} = require('../Expresiones/Unario');
+    const {Return} = require('../Instruccion/Return');
     const {Console} = require('../Instruccion/Console');
     const {errores,Error_} = require('../Reportes/Errores');
     const { Type } = require("../Modelos/Retorno");
@@ -16,6 +17,7 @@
     const {Instrucciones} = require('../Instruccion/Instrucciones');
     const {InstrucUnaria} = require('../Instruccion/InstrucUnaria');
     const {Funcion} = require('../Instruccion/Funcion');
+    const {Llamada} = require('../Instruccion/Llamada');
     const {Simbolo} = require('../Entornos/Environment');
 %}
 
@@ -52,6 +54,7 @@ string  (\"[^"]*\")
 "continue"              return 'CONTINUE'
 "for"                   return 'FOR'
 "function"              return 'FUNCTION'
+"return"                return 'RETURN'
 
 
 "++"                    return '++'
@@ -99,14 +102,13 @@ string  (\"[^"]*\")
 %%
 
 Init    
-    : Instrucciones EOF 
+    : Contenido EOF 
     {
         return $1;
     }
 ;
-
-Instrucciones
-    : Instrucciones Cont  
+Contenido
+        : Contenido Cont  
     {
         $1.push($2);
         $$ = $1;
@@ -115,12 +117,24 @@ Instrucciones
         $$ = [$1];
     }
 ;
-
-
 Cont
     : Instruc { $$ = $1; }
     | Funciones { $$ = $1; }
 ;
+
+
+Instrucciones
+    : Instrucciones Instruc  
+    {
+        $1.push($2);
+        $$ = $1;
+    }
+    | Instruc{
+        $$ = [$1];
+    }
+;
+
+
 
 Funciones
         : 'FUNCTION' ID '(' Parametros ')' ':' Tipo InstruccionesSent
@@ -165,6 +179,8 @@ Instruc
         | 'CONTINUE' ';'  { $$ = new Continue(@1.first_line, @1.first_column); }
         | Declaracion {$$ = $1;}
         | Unario ';' {$$ = new InstrucUnaria($1,@1.first_line, @1.first_column);}
+        | Llamada ';' { $$ = $1; } 
+        | 'RETURN' Exp ';' { $$ = new Return($2,@1.first_line, @1.first_column); }
         | error 
         { 
             //console.error('Este es un error sintáctico: ' + yytext + ', en la linea: ' + this._$.first_line + ', en la columna: ' + this._$.first_column); 
@@ -231,6 +247,29 @@ Declaracion
             | 'CONST' ID ':' Tipo '=' Exp ';' 
 ;
 
+//*****************LLAMADAS A FUNCIONES
+
+Llamada
+        : ID '('  ')'
+        {
+            $$ = new Llamada($1, [], @1.first_line, @1.first_column);
+        }
+        | ID '(' Expre ')'
+        {
+            $$ = new Llamada($1, $3, @1.first_line, @1.first_column);
+        }
+;
+
+
+Expre 
+    : Expre ',' Exp
+    {
+        $$ = $1.push($3);
+    }
+    | Exp{
+        $$ = [$1];
+    }
+;    
 
 Tipo
     : 'NUMBER' { $$ = Type.NUMBER; }
@@ -313,6 +352,10 @@ F
     | ID
     {
         $$ = new Variable($1,@1.first_line, @1.first_column);
+    }
+    | Llamada
+    {
+        $$ = $1;
     }
     | ID '.' LlamadaTypes
 ;

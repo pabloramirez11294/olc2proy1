@@ -76,7 +76,16 @@ export class Environment{
     public getFunciones():Map<string, Funcion>{
         return this.funciones;
     }
-
+    public getFuncion(id: string) : Funcion | undefined{
+        let env : Environment | null = this;
+        while(env != null){
+            if(env.funciones.has(id)){
+                return env.funciones.get(id);
+            }
+            env = env.anterior;
+        }
+        return undefined;
+    }
 
     public getGlobal() : Environment{
         let env : Environment | null = this;

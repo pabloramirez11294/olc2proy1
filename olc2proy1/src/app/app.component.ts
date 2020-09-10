@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import Ejecucion from './gramaticas/ejecucion';
 import {  Error_ ,errores} from './Reportes/Errores';
 import { Environment } from './Entornos/Environment';
+import {TipoEscape} from './Instruccion/BreakContinue';
 localStorage.setItem('CONSOLA', '');
 
 @Component({
@@ -34,7 +35,7 @@ export class AppComponent {
         try {          
           const actual = instruc.execute(entorno);
           this.setConsola();
-          if (actual != null || actual != undefined) {
+          if ((actual != null || actual != undefined)&& (actual.type==TipoEscape.BREAK || actual.type==TipoEscape.CONTINUE)) {
             errores.push(new Error_(actual.line,actual.column,'Semantico',actual.type + ' fuera de un ciclo',''));
           }         
         } catch (error) {

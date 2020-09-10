@@ -10,7 +10,6 @@ export class Instrucciones extends Instruction{
     public execute(env : Environment) {
         const newEnv = new Environment(env,env.getNombre());
         for(const instr of this.code){
-            const i:any=instr;
             try {
                 const element = instr.execute(newEnv);
                 if(element != undefined || element != null)
