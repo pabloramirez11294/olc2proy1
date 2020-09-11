@@ -69,8 +69,11 @@ export class Environment{
         return this.variables;
     }
 
-    public guardarFuncion(id: string, funcion : Funcion){
-        //TODO ver si la funcion ya existe, reportar error
+    public guardarFuncion(id: string, funcion : Funcion,linea:number,columna:number){
+        let global:Environment=this.getGlobal();
+        if(global.funciones.has(id))
+            throw new Error_(linea, columna, 'Semantico',
+                'Error: ya existe la funcion: '+id ,this.getNombre());
         this.funciones.set(id, funcion);
     }
     public getFunciones():Map<string, Funcion>{

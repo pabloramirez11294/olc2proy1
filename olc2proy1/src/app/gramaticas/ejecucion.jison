@@ -2,6 +2,7 @@
 %{
     const { ArithmeticOption,Aritmetico} = require('../Expresiones/Aritmetico');
     const {Relacional, RelationalOption} = require('../Expresiones/Relacional');
+    const {Logica, LogicaOpcion} = require('../Expresiones/Logica');
     const {Literal} = require('../Expresiones/Literal');
     const {Variable} = require('../Expresiones/Variable');
     const {Unario,OperadorOpcion} = require('../Expresiones/Unario');
@@ -11,6 +12,7 @@
     const { Type } = require("../Modelos/Retorno");
     const {If} = require('../Instruccion/If');
     const {Declaracion} = require('../Instruccion/Declaracion');
+    const {ListDeclaracion} = require('../Instruccion/ListDeclaracion');
     const {Break,Continue,TipoEscape} = require('../Instruccion/BreakContinue');
     const {While} = require('../Instruccion/While');
     const {For} = require('../Instruccion/For');
@@ -49,6 +51,9 @@ string  (\"[^"]*\")
 //sentenicas de control y ciclos
 "if"                    return 'IF'
 "else"                  return 'ELSE'
+"switch"                return 'SWITCH'
+"case"                  return 'CASE'
+"default"               return 'DEFAULT'
 "while"                 return 'WHILE'
 "break"                 return 'BREAK'
 "continue"              return 'CONTINUE'
@@ -82,6 +87,7 @@ string  (\"[^"]*\")
 "{"                     return '{'
 "}"                     return '}' 
 ";"                   return ';'
+","                   return ','
 
 
 ([a-zA-Z_])[a-zA-Z0-9_ñÑ]*	return 'ID'
@@ -96,6 +102,7 @@ string  (\"[^"]*\")
 %left '+' '-'
 %left '*' '/'
 %left '**' '%'
+%left '!'
 //%left MENOS
 %start Init
 
@@ -144,6 +151,14 @@ Funciones
         | 'FUNCTION' ID '(' ')' ':' Tipo InstruccionesSent  
         {
             $$ = new Funcion($2, [],$6,$7 , @1.first_line, @1.first_column);
+        }
+        | 'FUNCTION' ID '(' Parametros ')'  InstruccionesSent
+        {
+            $$ = new Funcion($2,$4,Type.VOID,$8,@1.first_line, @1.first_column);
+        }
+        | 'FUNCTION' ID '(' ')'  InstruccionesSent  
+        {
+            $$ = new Funcion($2, [],Type.VOID,$7 , @1.first_line, @1.first_column);
         }
 ;
 
@@ -211,6 +226,21 @@ InstruccionesSent
         $$ = new Instrucciones(new Array(), @1.first_line, @1.first_column);
     }
 ;
+//************************SWITCH
+
+Sent_switch
+            : 'SWITCH' '(' Exp ')' '{'  Cases Default '}' 
+;
+
+Cases
+    : Cases 'CASE'  Exp ':' InstruccionesSent
+    | 'CASE' Exp ':' InstruccionesSent
+;
+
+Default
+        : 'DEFAULT' ':' InstruccionesSent
+;
+
 //*********************** CICLOS
 Actualizacion
             : Unario { $$ = $1; }
@@ -224,27 +254,39 @@ Actualizacion
 //*********************** DECLARACION DE VARIABLES
 
 Declaracion
-            : 'LET' ID ':' Tipo '=' Exp ';'
+            : 'LET' ListaDeclaracion ';'
             {
-                $$ = new Declaracion($2,$4,$6,false, @1.first_line, @1.first_column);
-            }
-            | 'LET' ID ':' Tipo ';'
-            {
-                $$ = new Declaracion($2,$4,undefined,false, @1.first_line, @1.first_column);
-            }
-            | 'LET' ID  ';'
-            {
-                $$ = new Declaracion($2,undefined,undefined,false, @1.first_line, @1.first_column);
-            }
-            | 'LET' ID '=' Exp ';'
-            {
-                $$ = new Declaracion($2,undefined,$4,false, @1.first_line, @1.first_column);
-            }
+                { $$ = new ListDeclaracion($2, @1.first_line, @1.first_column); }
+            }            
             | ID '=' Exp ';'
             {
                 $$ = new Declaracion($1,undefined,$3,true, @1.first_line, @1.first_column);
             }
             | 'CONST' ID ':' Tipo '=' Exp ';' 
+;
+
+ListaDeclaracion
+                : ListaDeclaracion ',' OpcionDeclaracion { $1.push($3); }
+                | OpcionDeclaracion { $$ = [$1]; }
+;
+
+OpcionDeclaracion
+                : ID ':' Tipo '=' Exp
+                {
+                    $$ = new Declaracion($1,$3,$5,false, @1.first_line, @1.first_column);
+                }
+                | ID ':' Tipo
+                {
+                    $$ = new Declaracion($1,$3,undefined,false, @1.first_line, @1.first_column);
+                }
+                | ID '=' Exp
+                {
+                    $$ = new Declaracion($1,undefined,$3,false, @1.first_line, @1.first_column);
+                }
+                | ID
+                {
+                    $$ = new Declaracion($1,undefined,undefined,false, @1.first_line, @1.first_column);
+                }
 ;
 
 //*****************LLAMADAS A FUNCIONES
@@ -264,7 +306,8 @@ Llamada
 Expre 
     : Expre ',' Exp
     {
-        $$ = $1.push($3);
+        $1.push($3);
+        $$ = $1;
     }
     | Exp{
         $$ = [$1];
@@ -320,6 +363,18 @@ Exp
     {
         $$ = new Relacional($1, $3,RelationalOption.NOIGUAL, @1.first_line, @1.first_column);
     } 
+    | Exp '&&' Exp   
+    {
+        $$ = new Logica($1, $3,LogicaOpcion.AND, @1.first_line, @1.first_column);
+    }
+    | Exp '||' Exp  
+    {
+        $$ = new Logica($1, $3,LogicaOpcion.OR, @1.first_line, @1.first_column);
+    } 
+    | '!' Exp 
+    {
+        $$ = new Logica($2,null,LogicaOpcion.NOT, @1.first_line, @1.first_column);
+    }
     | '(' Exp ')'
     {
         $$ = $2;

@@ -10,6 +10,6 @@ export class Funcion extends Instruction{
     }
 
     public execute(environment : Environment) {
-        environment.guardarFuncion(this.id, this);
+        environment.guardarFuncion(this.id, this,this.line,this.column);
     }
 }

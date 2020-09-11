@@ -15,11 +15,11 @@ export class Relacional extends Expression{
         super(line,column);
     }
 
-    public execute(environment : Environment) : Retorno{
-        const leftValue = this.left.execute(environment);
-        const rightValue = this.right.execute(environment);
+    public execute(amb : Environment) : Retorno{
+        const leftValue = this.left.execute(amb);
+        const rightValue = this.right.execute(amb);
         let result : Retorno={value:null,type:null};
-        this.mismoTipo(leftValue.type, rightValue.type);
+        this.mismoTipo(leftValue.type, rightValue.type,amb.getNombre());
         if(this.type == RelationalOption.MENOR){     
             result.value = leftValue.value < rightValue.value;         
             result.type = Type.BOOLEAN;

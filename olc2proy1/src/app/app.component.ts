@@ -3,6 +3,7 @@ import Ejecucion from './gramaticas/ejecucion';
 import {  Error_ ,errores} from './Reportes/Errores';
 import { Environment } from './Entornos/Environment';
 import {TipoEscape} from './Instruccion/BreakContinue';
+import { Funcion } from './Instruccion/Funcion';
 localStorage.setItem('CONSOLA', '');
 
 @Component({
@@ -30,8 +31,18 @@ export class AppComponent {
     const entorno = new Environment(null, 'global');
     try {
       const instrucciones = Ejecucion.parse(this.editor);
+      for(const instruc of instrucciones){
+        try {
+            if(instruc instanceof Funcion)
+            instruc.execute(entorno);
+        } catch (error) {
+            errores.push(error);  
+        }
+      }
 
       for (const instruc of instrucciones) {
+        if(instruc instanceof Funcion)
+            continue;
         try {          
           const actual = instruc.execute(entorno);
           this.setConsola();

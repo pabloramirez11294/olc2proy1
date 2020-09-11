@@ -30,7 +30,7 @@ export class Llamada extends Instruction{
         }
         //retornar
         const resultado=func.instrucciones.execute(nuevoAmb);
-        if(func.tipo==Type.VOID && (resultado==null || resultado==undefined))
+        if(func.tipo!=Type.VOID && (resultado==null || resultado==undefined))
             throw new Error_(this.line,this.column,'Semántico','Error la función: '+func.id+" no retorna nada.",nombreAmbito);
         return resultado;
     }

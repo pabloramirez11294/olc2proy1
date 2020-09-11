@@ -1,6 +1,6 @@
 import { Retorno, Type } from "./Retorno";
 import { Environment } from "../Entornos/Environment";
-import {errores,Error_} from '../Reportes/Errores';
+import {Error_} from '../Reportes/Errores';
 export abstract class Expression {
 
     public line: number;
@@ -11,21 +11,20 @@ export abstract class Expression {
         this.column = column;
     }
 
-    public abstract execute(environment : Environment) : Retorno;
+    public abstract execute(amb : Environment) : Retorno;
 
 
-    public mismoTipo(tipo1 : Type, tipo2 : Type){
+    public mismoTipo(tipo1 : Type, tipo2 : Type,nombreAmb:string){
         if(tipo1 == Type.STRING && tipo2 == Type.STRING){
             return Type.STRING;
         }else if(tipo1 == Type.NUMBER && tipo2 == Type.NUMBER){
             return Type.NUMBER;
         }else{
-            //TODO colocar el ambito
-            throw new Error_(this.line, this.column, "Semantico", "Error los valores deben de ser del mismo tipo.","");
+            throw new Error_(this.line, this.column, "Semantico", "Error los valores deben de ser del mismo tipo.",nombreAmb);
         }
     }
 
-    public tipoDominante(tipo1 : number, tipo2 : number) : Type{
+    public tipoDominante(tipo1 : number, tipo2 : number,nombreAmb:string) : Type{
         
         if(tipo1 == Type.NULL || tipo2 == Type.NULL)
             return Type.NULL;
@@ -38,8 +37,7 @@ export abstract class Expression {
         else if(tipo1 == Type.BOOLEAN && tipo2 == Type.BOOLEAN)
             return Type.BOOLEAN;
         else{
-            //TODO colocar el ambito
-            throw new Error_(this.line, this.column, "Semantico", "Error en los tipos de datos","");
+            throw new Error_(this.line, this.column, "Semantico", "Error en los tipos de datos",nombreAmb);
         }
             
             
