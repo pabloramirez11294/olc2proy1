@@ -1,9 +1,7 @@
 import { Instruction } from "../Modelos/Instruction";
 import { Expression } from "../Modelos/Expression";
 import { Environment } from "../Entornos/Environment";
-
-
-
+import { txtConsola } from '../../environments/environment';
 
 export class Console extends Instruction{
 
@@ -17,9 +15,6 @@ export class Console extends Instruction{
     }
 
     setConsola(contenido:any){
-        if(localStorage.getItem('CONSOLA')==undefined){
-          return null;
-        }
-        localStorage.setItem('CONSOLA',localStorage.getItem('CONSOLA')+contenido.value+"\n");
+        txtConsola.consolatxt+=contenido.value+"\n";
       }
 }

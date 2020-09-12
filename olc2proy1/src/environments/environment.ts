@@ -5,6 +5,9 @@
 export const environment = {
   production: false
 };
+export const txtConsola = {
+  consolatxt:""
+};
 
 /*
  * For easier debugging in development mode, you can import the following file

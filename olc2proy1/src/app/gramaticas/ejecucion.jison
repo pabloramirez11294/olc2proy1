@@ -15,7 +15,7 @@
     const {Declaracion} = require('../Instruccion/Declaracion');
     const {ListDeclaracion} = require('../Instruccion/ListDeclaracion');
     const {Break,Continue,TipoEscape} = require('../Instruccion/BreakContinue');
-    const {While} = require('../Instruccion/While');
+    const {While,DoWhile} = require('../Instruccion/While');
     const {For} = require('../Instruccion/For');
     const {Instrucciones} = require('../Instruccion/Instrucciones');
     const {InstrucUnaria} = require('../Instruccion/InstrucUnaria');
@@ -63,6 +63,7 @@ string2  (\'[^"]*\')
 "for"                   return 'FOR'
 "function"              return 'FUNCTION'
 "return"                return 'RETURN'
+"do"                    return 'DO'
 
 
 "++"                    return '++'
@@ -193,6 +194,10 @@ Instruc
         | 'WHILE' '(' Exp ')' InstruccionesSent 
         {
             $$ = new While($3,$5, @1.first_line, @1.first_column);
+        }
+        | 'DO'  InstruccionesSent 'WHILE' '(' Exp ')' ';'
+        {
+            $$ = new DoWhile($5,$2, @1.first_line, @1.first_column);
         }
         | 'BREAK' ';' { $$ = new Break(@1.first_line, @1.first_column); }
         | 'CONTINUE' ';'  { $$ = new Continue(@1.first_line, @1.first_column); }

@@ -4,7 +4,7 @@ import {  Error_ ,errores} from './Reportes/Errores';
 import { Environment } from './Entornos/Environment';
 import {TipoEscape} from './Instruccion/BreakContinue';
 import { Funcion } from './Instruccion/Funcion';
-localStorage.setItem('CONSOLA', '');
+import { txtConsola } from '../environments/environment';
 
 @Component({
   selector: 'app-root',
@@ -73,17 +73,12 @@ export class AppComponent {
   }
 
   setConsola() {
-    this.consola = localStorage.getItem('CONSOLA');
+    this.consola=txtConsola.consolatxt;
   }
 
   limpiar(){
-    if(localStorage.getItem('CONSOLA')==undefined){
-      this.editor='';
-      this.consola='';
-      return null;
-    }
-    localStorage.setItem('CONSOLA',"");
     this.editor='';
     this.consola='';
+    txtConsola.consolatxt="";
   }
 }

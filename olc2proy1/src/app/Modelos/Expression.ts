@@ -19,6 +19,8 @@ export abstract class Expression {
             return Type.STRING;
         }else if(tipo1 == Type.NUMBER && tipo2 == Type.NUMBER){
             return Type.NUMBER;
+        }else if(tipo1 == Type.BOOLEAN && tipo2 == Type.BOOLEAN){
+                return Type.BOOLEAN;
         }else{
             throw new Error_(this.line, this.column, "Semantico", "Error los valores deben de ser del mismo tipo.",nombreAmb);
         }
