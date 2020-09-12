@@ -27,8 +27,9 @@
 %lex
 %options case-sensitive
 entero [0-9]+
-number "-"?{entero}("."{entero})?
+number {entero}("."{entero})?
 string  (\"[^"]*\")
+string2  (\'[^"]*\')
 
 %%
 \s+                   /* skip whitespace */
@@ -37,6 +38,7 @@ string  (\"[^"]*\")
 //valores
 {number}              return 'NUMERO'
 {string}             return 'CADENA'
+{string2}             return 'CADENA2'
 //tipos de datos
 "number"			  return 'NUMBER'
 "string"			  return 'STRING'
@@ -95,15 +97,16 @@ string  (\"[^"]*\")
 <<EOF>>		          return 'EOF'
 
 /lex
-
 %left '||'
 %left '&&'
 %left '==', '!='
 %left '>=', '<=', '<', '>'
+%left '++' '--'
 %left '+' '-'
 %left '*' '/'
 %left '**' '%'
 %left '!'
+%left Umenos
 //%left MENOS
 %start Init
 
@@ -155,11 +158,11 @@ Funciones
         }
         | 'FUNCTION' ID '(' Parametros ')'  InstruccionesSent
         {
-            $$ = new Funcion($2,$4,Type.VOID,$8,@1.first_line, @1.first_column);
+            $$ = new Funcion($2,$4,Type.VOID,$6,@1.first_line, @1.first_column);
         }
         | 'FUNCTION' ID '(' ')'  InstruccionesSent  
         {
-            $$ = new Funcion($2, [],Type.VOID,$7 , @1.first_line, @1.first_column);
+            $$ = new Funcion($2, [],Type.VOID,$5 , @1.first_line, @1.first_column);
         }
 ;
 
@@ -354,6 +357,15 @@ Exp
     {
         $$ = new Aritmetico($1, $3, ArithmeticOption.RESTA, @1.first_line,@1.first_column);
     }
+    | Exp '**' Exp
+    { 
+        $$ = new Aritmetico($1, $3, ArithmeticOption.POTENCIA, @1.first_line,@1.first_column);
+    }  
+    
+    | Exp '%' Exp
+    { 
+        $$ = new Aritmetico($1, $3, ArithmeticOption.MODULO, @1.first_line,@1.first_column);
+    }  
     | Exp '*' Exp
     { 
         $$ = new Aritmetico($1, $3, ArithmeticOption.MULT, @1.first_line,@1.first_column);
@@ -398,6 +410,10 @@ Exp
     {
         $$ = new Logica($2,null,LogicaOpcion.NOT, @1.first_line, @1.first_column);
     }
+    | '-' Exp %prec Umenos  
+    {
+        $$ = new Aritmetico($2,null, ArithmeticOption.RESTA, @1.first_line,@1.first_column);
+    }
     | '(' Exp ')'
     {
         $$ = $2;
@@ -418,6 +434,10 @@ F
     | CADENA
     {
         $$ = new Literal($1.replace(/\"/g,""), @1.first_line, @1.first_column, Type.STRING);
+    }
+    | CADENA2
+    {
+        $$ = new Literal($1.replace(/\'/g,""), @1.first_line, @1.first_column, Type.STRING);
     }
     | TRUE
     {

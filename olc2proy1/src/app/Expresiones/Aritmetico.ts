@@ -6,7 +6,9 @@ export enum ArithmeticOption{
     SUMA,
     RESTA,
     MULT,
-    DIV
+    DIV,
+    POTENCIA,
+    MODULO,
 }
 
 export class Aritmetico extends Expression{
@@ -17,10 +19,18 @@ export class Aritmetico extends Expression{
 
     public execute(amb : Environment) : Retorno{
         const leftValue = this.left.execute(amb);
-        const rightValue = this.right.execute(amb);
+        const rightValue = this.right?.execute(amb);
         let result : Retorno;
-        const tipoDominante = this.tipoDominante(leftValue.type, rightValue.type,amb.getNombre());
         
+        
+        //unitario -
+        if(this.right==null && this.type==ArithmeticOption.RESTA){
+            if(leftValue.type!=Type.NUMBER)
+                throw new Error_(this.line, this.column, "Semantico", "No se puede negar un valor que no sea Number:" + leftValue.value,amb.getNombre());
+            result = {value : (leftValue.value *-1), type : Type.NUMBER};
+            return result;
+        }
+        const tipoDominante = this.tipoDominante(leftValue.type, rightValue.type,amb.getNombre());
         if(this.type == ArithmeticOption.SUMA){
             if(tipoDominante == Type.STRING)
                 result = {value : (leftValue.value.toString() + rightValue.value.toString()), type : Type.STRING};
@@ -38,6 +48,11 @@ export class Aritmetico extends Expression{
         }
         else if(this.type == ArithmeticOption.MULT){
             result = {value : (leftValue.value * rightValue.value), type : Type.NUMBER};
+        }else if(this.type == ArithmeticOption.POTENCIA){
+            result = {value : (leftValue.value ** rightValue.value), type : Type.NUMBER};
+        }
+        else if(this.type == ArithmeticOption.MODULO){
+            result = {value : (leftValue.value % rightValue.value), type : Type.NUMBER};
         }
         else{
             if(rightValue.value == 0){
