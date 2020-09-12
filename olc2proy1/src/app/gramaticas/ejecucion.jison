@@ -11,6 +11,7 @@
     const {errores,Error_} = require('../Reportes/Errores');
     const { Type } = require("../Modelos/Retorno");
     const {If} = require('../Instruccion/If');
+    const {Switch} = require('../Instruccion/Switch');
     const {Declaracion} = require('../Instruccion/Declaracion');
     const {ListDeclaracion} = require('../Instruccion/ListDeclaracion');
     const {Break,Continue,TipoEscape} = require('../Instruccion/BreakContinue');
@@ -26,7 +27,7 @@
 %lex
 %options case-sensitive
 entero [0-9]+
-number {entero}("."{entero})?
+number "-"?{entero}("."{entero})?
 string  (\"[^"]*\")
 
 %%
@@ -192,6 +193,7 @@ Instruc
         }
         | 'BREAK' ';' { $$ = new Break(@1.first_line, @1.first_column); }
         | 'CONTINUE' ';'  { $$ = new Continue(@1.first_line, @1.first_column); }
+        | Sent_switch { $$ = $1; }
         | Declaracion {$$ = $1;}
         | Unario ';' {$$ = new InstrucUnaria($1,@1.first_line, @1.first_column);}
         | Llamada ';' { $$ = $1; } 
@@ -226,19 +228,40 @@ InstruccionesSent
         $$ = new Instrucciones(new Array(), @1.first_line, @1.first_column);
     }
 ;
+InstruccionesSwitch
+                    : Instrucciones  
+                    {
+                        $$ = new Instrucciones($1, @1.first_line, @1.first_column);
+                    }
+                    |  {
+                        $$ = new Instrucciones(new Array(), @1.first_line, @1.first_column);
+                    }
+;
 //************************SWITCH
 
 Sent_switch
             : 'SWITCH' '(' Exp ')' '{'  Cases Default '}' 
+            {
+                $$ = new Switch($3,$6,$7);
+            }
 ;
 
 Cases
-    : Cases 'CASE'  Exp ':' InstruccionesSent
-    | 'CASE' Exp ':' InstruccionesSent
+    : Cases 'CASE'  Exp ':' InstruccionesSwitch
+    {
+        $$.set($3,$5); 
+    }
+    | 'CASE' Exp ':' InstruccionesSwitch
+    {
+        let a = new Map();
+        $$ = a.set($2,$4);
+    }
 ;
 
 Default
-        : 'DEFAULT' ':' InstruccionesSent
+        : 'DEFAULT' ':' InstruccionesSwitch
+        { $$ = $3; }
+        |
 ;
 
 //*********************** CICLOS
