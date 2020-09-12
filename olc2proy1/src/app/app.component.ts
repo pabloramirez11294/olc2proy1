@@ -69,7 +69,7 @@ export class AppComponent {
     }
     console.log('Tabla de Simbolos: ', entorno.getTablaSimbolos());
     console.log('Funciones: ', entorno.getFunciones());
-   // console.log('Reporte errores:', errores);
+    console.log('Reporte errores:', errores);
   }
 
   setConsola() {
