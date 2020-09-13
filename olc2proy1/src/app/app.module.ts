@@ -5,10 +5,14 @@ import { CodemirrorModule } from '@ctrl/ngx-codemirror';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
+import { InicioComponent } from './components/inicio/inicio.component';
+import { NavigationComponent } from './components/navigation/navigation.component';
 
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
+    InicioComponent,
+    NavigationComponent
   ],
   imports: [
     BrowserModule,
