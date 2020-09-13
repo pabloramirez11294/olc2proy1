@@ -7,7 +7,7 @@ export class Simbolo{
     public id : string;
     public tipo : Type;
 
-    constructor(valor: any, id: string, tipo: Type){
+    constructor(valor: any, id: string, tipo: Type,public ambito:string,public linea:string,public columna:string){
         this.valor = valor;
         this.id = id;
         this.tipo = tipo;
@@ -35,7 +35,7 @@ export class Environment{
             throw new Error_(linea, columna, 'Semantico',
             'DECLARACION: ya existe la variable: '+id ,this.getNombre());
     
-        this.variables.set(id, new Simbolo(valor, id, type));
+        this.variables.set(id, new Simbolo(valor, id, type,this.getNombre(),linea.toString(),columna.toString()));
     }
     //para el tipo       nombVar = exp;
     public asignar(id: string, valor: any,type: Type,linea:number,columna:number){

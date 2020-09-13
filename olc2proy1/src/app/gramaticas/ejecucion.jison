@@ -132,6 +132,11 @@ Contenido
 Cont
     : Instruc { $$ = $1; }
     | Funciones { $$ = $1; }
+    | error 
+        { 
+            //console.error('Este es un error sintáctico: ' + yytext + ', en la linea: ' + this._$.first_line + ', en la columna: ' + this._$.first_column); 
+            $$= new Error_(this._$.first_line , this._$.first_column, 'Sintáctico',yytext,'');
+        }
 ;
 
 
@@ -206,11 +211,6 @@ Instruc
         | Unario ';' {$$ = new InstrucUnaria($1,@1.first_line, @1.first_column);}
         | Llamada ';' { $$ = $1; } 
         | 'RETURN' Exp ';' { $$ = new Return($2,@1.first_line, @1.first_column); }
-        | error 
-        { 
-            //console.error('Este es un error sintáctico: ' + yytext + ', en la linea: ' + this._$.first_line + ', en la columna: ' + this._$.first_column); 
-            throw new Error_(this._$.first_line , this._$.first_column, 'Sintáctico',yytext,'');
-        }
 
 ;
 //*********************SENTENCIAS DE CONTROL
@@ -472,11 +472,6 @@ Unario
     {
         $$ = new Unario($1,OperadorOpcion.DECRE,@1.first_line, @1.first_column);
     }
-    /*TODO terminar operador unario -
-    |'-' Exp %prec MENOS	
-    {
-       // $$ = new Aritmetico(null, $2, ArithmeticOption.MINUS, @1.first_line,@1.first_column);
-    }*/
 ;
 
 

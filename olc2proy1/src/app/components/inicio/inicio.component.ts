@@ -5,7 +5,6 @@ import { Environment, Simbolo } from '../../Entornos/Environment';
 import {TipoEscape} from '../../Instruccion/BreakContinue';
 import { Funcion } from '../../Instruccion/Funcion';
 import { txtConsola,reporte } from '../../../environments/environment';
-import { Stream } from 'stream';
 
 
 @Component({
@@ -21,6 +20,7 @@ export class InicioComponent implements OnInit {
   }
   title = 'olc2proy1';
   simbolos:Array<Array<string>>;
+  repErrores:Array<Array<string>>;
   editor = `console.log(3);
   let a:number=1.99;
   let b:string="hola mundo";
@@ -41,15 +41,17 @@ export class InicioComponent implements OnInit {
       const instrucciones = Ejecucion.parse(this.editor);
       for(const instruc of instrucciones){
         try {
-            if(instruc instanceof Funcion)
-            instruc.execute(entorno);
+            if(instruc instanceof Error_){
+              errores.push(instruc);continue;
+            }else if(instruc instanceof Funcion)
+              instruc.execute(entorno);
         } catch (error) {
             errores.push(error);  
         }
       }
 
       for (const instruc of instrucciones) {
-        if(instruc instanceof Funcion)
+        if(instruc instanceof Error_ ||instruc instanceof Funcion)
             continue;
         try {          
           const actual = instruc.execute(entorno);
@@ -81,6 +83,7 @@ export class InicioComponent implements OnInit {
     this.setTablaSimbolos(tablaVar);
     console.log('Funciones: ', entorno.getFunciones());
     console.log('Reporte errores:', errores);
+    this.setReporteErrores();
   }
 
   setConsola() {
@@ -95,10 +98,20 @@ export class InicioComponent implements OnInit {
   setTablaSimbolos(simbolos:Map<string,Simbolo>):void{
     this.simbolos=new Array<Array<string>>();
     for (var simbolo of simbolos.values()) {
-      const s:Array<string>=new Array<string>(simbolo.id,simbolo.valor,simbolo.tipo.toString());
+      const s:Array<string>=new Array<string>(simbolo.id,simbolo.valor,simbolo.tipo.toString(),
+                                                  simbolo.ambito,simbolo.linea,simbolo.columna);
       this.simbolos.push(s);
     }
     console.log(this.simbolos);
+  }
+
+  setReporteErrores(){
+    this.repErrores=new Array<Array<string>>();
+    for(var err of errores){
+      const e:Array<string>=new Array<string>(err.tipo,err.descripcion,err.linea.toString(),
+                                                          err.columna.toString());
+      this.repErrores.push(e);                            
+    }
   }
 
 }
