@@ -6,7 +6,7 @@ import {Error_} from '../Reportes/Errores';
 export class Declaracion extends Instruction{
 
 
-    constructor(private id: string,private tipo:Type ,private exp : Expression,private asignacion:boolean,
+    constructor(public id: string,private tipo:Type ,private exp : Expression,private asignacion:boolean,
          line : number, column: number){
         super(line, column);
     }

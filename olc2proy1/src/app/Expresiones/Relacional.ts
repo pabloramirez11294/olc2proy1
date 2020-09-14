@@ -11,7 +11,7 @@ export enum RelationalOption{
 }
 
 export class Relacional extends Expression{
-    constructor(private left: Expression, private right: Expression, private type : RelationalOption, line: number, column: number){
+    constructor(public left: Expression, public right: Expression, public type : RelationalOption, line: number, column: number){
         super(line,column);
     }
 

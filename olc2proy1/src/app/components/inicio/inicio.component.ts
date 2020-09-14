@@ -5,7 +5,17 @@ import { Environment, Simbolo } from '../../Entornos/Environment';
 import {TipoEscape} from '../../Instruccion/BreakContinue';
 import { Funcion } from '../../Instruccion/Funcion';
 import { txtConsola,reporte } from '../../../environments/environment';
-
+import { graphviz }  from 'd3-graphviz';
+import { wasmFolder } from "@hpcc-js/wasm";
+import { Instruction } from 'src/app/Modelos/Instruction';
+import { Console } from '../../Instruccion/Console';
+import { Literal } from 'src/app/Expresiones/Literal';
+import { ListDeclaracion } from 'src/app/Instruccion/ListDeclaracion';
+import { Declaracion } from 'src/app/Instruccion/Declaracion';
+import { Instrucciones } from 'src/app/Instruccion/Instrucciones';
+import { If } from 'src/app/Instruccion/If';
+import { Relacional } from 'src/app/Expresiones/Relacional';
+import { Aritmetico } from 'src/app/Expresiones/Aritmetico';
 
 @Component({
   selector: 'app-inicio',
@@ -39,6 +49,11 @@ export class InicioComponent implements OnInit {
     const entorno = new Environment(null, 'global');
     try {
       const instrucciones = Ejecucion.parse(this.editor);
+      console.log(instrucciones)
+    const txtAST=this.recorrerAST(instrucciones,0);
+    this.graficarAST(txtAST);
+    console.log(txtAST);
+    /*
       for(const instruc of instrucciones){
         try {
             if(instruc instanceof Error_){
@@ -68,7 +83,7 @@ export class InicioComponent implements OnInit {
             console.log(error);
                     
         }
-      }
+      }*/
     } catch (error) {
       console.log(error)
       if(error.ambito!=null){
@@ -76,14 +91,14 @@ export class InicioComponent implements OnInit {
         errores.push(error);  
       }else
         errores.push(new Error_(error.lineNumber, 0, 'Lexico', error.message, ''));
-    }
+    }/*
     const tablaVar=entorno.getTablaSimbolos();
     reporte.simbolos=tablaVar;
     console.log('Tabla de Simbolos: ', tablaVar);
     this.setTablaSimbolos(tablaVar);
     console.log('Funciones: ', entorno.getFunciones());
     console.log('Reporte errores:', errores);
-    this.setReporteErrores();
+    this.setReporteErrores();*/
   }
 
   setConsola() {
@@ -113,5 +128,86 @@ export class InicioComponent implements OnInit {
       this.repErrores.push(e);                            
     }
   }
+
+  graficarAST(txt:string){
+    txt="digraph G {\r\n node[shape=doublecircle, style=filled, color=khaki1, fontcolor=black]; \r\n"+txt+"\n}";
+    wasmFolder('https://cdn.jsdelivr.net/npm/@hpcc-js/wasm@0.3.13/dist');
+    graphviz('.ast').renderDot(txt);
+  }
+
+
+
+  cont:number=0;
+  recorrerAST(raiz:any,id:number):string{
+    this.cont=id;   
+    let cuerpo:string="";
+    try {
+      if( raiz instanceof Instrucciones){        
+        for(const hijos of raiz.code){
+          this.cont++;
+          cuerpo += "\""+id+"_" + raiz.constructor.name + "\"->\""+this.cont+"_"+hijos.constructor.name+"\"";
+          cuerpo += this.recorrerAST(hijos, this.cont); 
+        }      
+      }else if( raiz instanceof Array){        
+        for(const hijos of raiz){
+          this.cont++;
+          cuerpo += "\""+id+"_" + raiz.constructor.name + "\"->\""+this.cont+"_"+hijos.constructor.name+"\"";
+          cuerpo += this.recorrerAST(hijos, this.cont); 
+        }      
+      }else if(raiz instanceof Console){
+        this.cont++;      
+        cuerpo += "\""+id+"_" + raiz.constructor.name + "\"->\""+this.cont+"_"+raiz.value.constructor.name+"\"";
+        cuerpo += this.recorrerAST(raiz.value, this.cont); 
+      }else if(raiz instanceof Literal){
+        this.cont++;      
+        cuerpo += "\""+id+"_" + raiz.constructor.name + "\"->\""+this.cont+"_"+raiz.value+"\"";
+      }else if( raiz instanceof ListDeclaracion){
+        for(const hijos of raiz.lista){
+          this.cont++;
+          cuerpo += "\""+id+"_" + raiz.constructor.name + "\"->\""+this.cont+"_"+hijos.constructor.name+"\"";
+          cuerpo += this.recorrerAST(hijos, this.cont); 
+        }
+      }else if(raiz instanceof Declaracion){
+        this.cont++;      
+        cuerpo += "\""+id+"_" + raiz.constructor.name + "\"->\""+this.cont+"_"+raiz.id+"\"";
+      }else if( raiz instanceof Instrucciones){
+        for(const hijos of raiz.code){
+          this.cont++;
+          cuerpo += "\""+id+"_" + raiz.constructor.name + "\"->\""+this.cont+"_"+hijos.constructor.name+"\"";
+          cuerpo += this.recorrerAST(hijos, this.cont); 
+        }
+      }else if(raiz instanceof If){
+        this.cont++;      
+        cuerpo += "\""+id+"_" + raiz.constructor.name + "\"->\""+this.cont+"_"+raiz.condicion.constructor.name+"\"";
+        cuerpo += this.recorrerAST(raiz.condicion, this.cont); 
+        this.cont++;cuerpo+=this.cadena(id,raiz.constructor.name,this.cont,raiz.codeIF.constructor.name);
+        cuerpo += this.recorrerAST(raiz.codeIF, this.cont); 
+        this.cont++;cuerpo+=this.cadena(id,raiz.constructor.name,this.cont,raiz.codeElse.constructor.name);
+        cuerpo += this.recorrerAST(raiz.codeElse, this.cont); 
+      }else if(raiz instanceof Relacional || raiz instanceof Aritmetico){
+        this.cont++;      
+        cuerpo += "\""+id+"_" + raiz.constructor.name + "\"->\""+this.cont+"_"+raiz.left.constructor.name+"\"";
+        cuerpo += this.recorrerAST(raiz.left, this.cont); 
+        this.cont++;      
+        cuerpo += "\""+id+"_" + raiz.constructor.name + "\"->\""+this.cont+"_"+raiz.right.constructor.name+"\"";
+        cuerpo += this.recorrerAST(raiz.right, this.cont); 
+      }else if(raiz instanceof Funcion){
+        this.cont++;cuerpo+=this.cadena(id,raiz.constructor.name,this.cont,raiz.instrucciones.constructor.name);
+        cuerpo += this.recorrerAST(raiz.instrucciones, this.cont); 
+      }else{
+        
+
+      }
+    } catch (error) {
+      console.log(error)
+    }
+    
+    return cuerpo;
+  }
+
+  public cadena(id:number,raiz:string,cont:number,hijo:string):string{
+    return "\""+id+"_" + raiz + "\"->\""+cont+"_"+hijo+"\"";
+  }
+
 
 }

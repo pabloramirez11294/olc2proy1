@@ -3,7 +3,7 @@ import { Retorno, Type } from "../Modelos/Retorno";
 
 export class Literal extends Expression{
     
-    constructor(private value : any, line : number, column: number, private type : number){
+    constructor(public value : any, line : number, column: number, private type : number){
         super(line, column);
     }
 

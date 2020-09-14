@@ -293,7 +293,7 @@ Declaracion
             {
                 $$ = new Declaracion($1,undefined,$3,true, @1.first_line, @1.first_column);
             }
-            | 'CONST' ID ':' Tipo '=' Exp ';' 
+            | 'CONST' ID ':' Tipo '=' Exp ';' //TODO falta constante
 ;
 
 ListaDeclaracion

@@ -5,7 +5,7 @@ import { txtConsola } from '../../environments/environment';
 
 export class Console extends Instruction{
 
-    constructor(private value : Expression, line : number, column : number){
+    constructor(public value : Expression, line : number, column : number){
         super(line, column);
     }
     public execute(environment : Environment) {

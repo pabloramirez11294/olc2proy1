@@ -13,7 +13,7 @@ export enum ArithmeticOption{
 
 export class Aritmetico extends Expression{
 
-    constructor(private left: Expression, private right: Expression, private type : ArithmeticOption, line: number, column: number){
+    constructor(public left: Expression, public right: Expression, public type : ArithmeticOption, line: number, column: number){
         super(line,column);
     }
 
