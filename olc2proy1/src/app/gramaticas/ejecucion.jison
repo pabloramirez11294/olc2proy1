@@ -64,6 +64,7 @@ string2  (\'[^"]*\')
 "function"              return 'FUNCTION'
 "return"                return 'RETURN'
 "do"                    return 'DO'
+"null"                  return 'NULL'
 
 
 "++"                    return '++'
@@ -89,7 +90,9 @@ string2  (\'[^"]*\')
 "("                     return '('
 ")"                     return ')' 
 "{"                     return '{'
-"}"                     return '}' 
+"}"                     return '}'
+"["                     return '['
+"]"                     return ']'  
 ";"                   return ';'
 ","                   return ','
 
@@ -318,6 +321,22 @@ OpcionDeclaracion
                 {
                     $$ = new Declaracion($1,undefined,undefined,false, @1.first_line, @1.first_column);
                 }
+                | ID ':' Tipo Dim '=' Dimensiones 
+;
+
+Dim
+            : Dim '['']'
+            | '['']'
+;
+
+Dimensiones
+            : '[' OpcDim ']' 
+;
+
+OpcDim
+        : Expre
+        | Dimensiones 
+        |
 ;
 
 //*****************LLAMADAS A FUNCIONES
@@ -460,6 +479,7 @@ F
     {
         $$ = $1;
     }
+    | NULL //TODO implementar null
     | ID '.' LlamadaTypes
 ;
 

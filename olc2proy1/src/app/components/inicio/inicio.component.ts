@@ -48,12 +48,7 @@ export class InicioComponent implements OnInit {
     errores.length=0;
     const entorno = new Environment(null, 'global');
     try {
-      const instrucciones = Ejecucion.parse(this.editor);
-      console.log(instrucciones)
-    const txtAST=this.recorrerAST(instrucciones,0);
-    this.graficarAST(txtAST);
-    console.log(txtAST);
-    /*
+      const instrucciones = Ejecucion.parse(this.editor);    
       for(const instruc of instrucciones){
         try {
             if(instruc instanceof Error_){
@@ -83,7 +78,7 @@ export class InicioComponent implements OnInit {
             console.log(error);
                     
         }
-      }*/
+      }
     } catch (error) {
       console.log(error)
       if(error.ambito!=null){
@@ -91,14 +86,14 @@ export class InicioComponent implements OnInit {
         errores.push(error);  
       }else
         errores.push(new Error_(error.lineNumber, 0, 'Lexico', error.message, ''));
-    }/*
+    }
     const tablaVar=entorno.getTablaSimbolos();
     reporte.simbolos=tablaVar;
     console.log('Tabla de Simbolos: ', tablaVar);
     this.setTablaSimbolos(tablaVar);
     console.log('Funciones: ', entorno.getFunciones());
     console.log('Reporte errores:', errores);
-    this.setReporteErrores();*/
+    this.setReporteErrores();
   }
 
   setConsola() {
@@ -123,11 +118,25 @@ export class InicioComponent implements OnInit {
   setReporteErrores(){
     this.repErrores=new Array<Array<string>>();
     for(var err of errores){
-      const e:Array<string>=new Array<string>(err.tipo,err.descripcion,err.linea.toString(),
+      const e:Array<string>=new Array<string>(err.tipo,err.descripcion,err.linea?.toString(),
                                                           err.columna.toString());
       this.repErrores.push(e);                            
     }
   }
+
+  //********************** AST
+  btnAST(){
+    try {
+      const instrucciones = Ejecucion.parse(this.editor);
+      const txtAST=this.recorrerAST(instrucciones,0);
+      this.graficarAST(txtAST);
+      //console.log(txtAST);
+    }catch(error){
+      console.log(error);
+    }    
+  }
+
+
 
   graficarAST(txt:string){
     txt="digraph G {\r\n node[shape=doublecircle, style=filled, color=khaki1, fontcolor=black]; \r\n"+txt+"\n}";
