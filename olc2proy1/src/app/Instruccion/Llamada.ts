@@ -26,7 +26,7 @@ export class Llamada extends Instruction{
             if(sim.tipo!=valor.type)
                 throw new Error_(this.line,this.column,'Semántico','Error los tipos no coinciden del parametro: '+sim.id,nombreAmbito);
             sim.valor=valor;
-            nuevoAmb.guardar(sim.id, sim.valor.value, sim.tipo,this.line,this.column);
+            nuevoAmb.guardar(sim.id, sim.valor.value, sim.tipo,this.line,this.column,false);
         }
         //retornar
         const resultado=func.instrucciones.execute(nuevoAmb);

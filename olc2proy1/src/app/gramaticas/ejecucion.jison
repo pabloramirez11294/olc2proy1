@@ -6,6 +6,7 @@
     const {Literal} = require('../Expresiones/Literal');
     const {Variable} = require('../Expresiones/Variable');
     const {Unario,OperadorOpcion} = require('../Expresiones/Unario');
+    const {Ternario} = require('../Expresiones/Ternario');
     const {Return} = require('../Instruccion/Return');
     const {Console} = require('../Instruccion/Console');
     const {errores,Error_} = require('../Reportes/Errores');
@@ -101,6 +102,7 @@ string2  (\'[^"]*\')
 <<EOF>>		          return 'EOF'
 
 /lex
+%right '?' ':'
 %left '||'
 %left '&&'
 %left '==', '!='
@@ -290,13 +292,16 @@ Actualizacion
 Declaracion
             : 'LET' ListaDeclaracion ';'
             {
-                { $$ = new ListDeclaracion($2, @1.first_line, @1.first_column); }
+                $$ = new ListDeclaracion($2, @1.first_line, @1.first_column); 
             }            
             | ID '=' Exp ';'
             {
                 $$ = new Declaracion($1,undefined,$3,true, @1.first_line, @1.first_column);
             }
-            | 'CONST' ID ':' Tipo '=' Exp ';' //TODO falta constante
+            | 'CONST' ListaDeclaracionConst ';' 
+            {
+                $$ = new ListDeclaracion($2, @1.first_line, @1.first_column); 
+            } 
 ;
 
 ListaDeclaracion
@@ -337,6 +342,25 @@ OpcDim
         : Expre
         | Dimensiones 
         |
+;
+
+ListaDeclaracionConst
+                : ListaDeclaracionConst ',' OpcionDeclaracionConst { $1.push($3); }
+                | OpcionDeclaracionConst { $$ = [$1]; }
+;
+
+OpcionDeclaracionConst
+                : ID ':' Tipo '=' Exp
+                {
+                    $$ = new Declaracion($1,$3,$5,false, @1.first_line, @1.first_column);
+                    $$.constante=true;
+                }
+                | ID '=' Exp
+                {
+                    $$ = new Declaracion($1,undefined,$3,false, @1.first_line, @1.first_column);
+                    $$.constante=true;
+                }
+                | ID ':' Tipo Dim '=' Dimensiones 
 ;
 
 //*****************LLAMADAS A FUNCIONES
@@ -430,6 +454,10 @@ Exp
     {
         $$ = new Logica($1, $3,LogicaOpcion.OR, @1.first_line, @1.first_column);
     } 
+    | Exp '?' Exp ':' Exp  
+    {
+        $$ = new Ternario($1, $3, $5, @1.first_line, @1.first_column);
+    }
     | '!' Exp 
     {
         $$ = new Logica($2,null,LogicaOpcion.NOT, @1.first_line, @1.first_column);
@@ -479,7 +507,10 @@ F
     {
         $$ = $1;
     }
-    | NULL //TODO implementar null
+    | NULL 
+    {
+        $$ = new Literal(null, @1.first_line, @1.first_column, Type.NULL);
+    }
     | ID '.' LlamadaTypes
 ;
 

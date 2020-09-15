@@ -6,11 +6,13 @@ export class Simbolo{
     public valor :any;
     public id : string;
     public tipo : Type;
-
-    constructor(valor: any, id: string, tipo: Type,public ambito:string,public linea:string,public columna:string){
+    public constante:boolean;
+    constructor(valor: any, id: string, tipo: Type,public ambito:string,public linea:string,public columna:string,
+                                                                                constante:boolean){
         this.valor = valor;
         this.id = id;
         this.tipo = tipo;
+        this.constante=constante;
     }
 }
 export class Environment{
@@ -30,24 +32,26 @@ export class Environment{
         this.nombre=nombre;
     }
 
-    public guardar(id: string, valor: any, type: Type,linea:number,columna:number){
+    public guardar(id: string, valor: any, type: Type,linea:number,columna:number,constante:boolean){
         if(this.variables.has(id))
             throw new Error_(linea, columna, 'Semantico',
             'DECLARACION: ya existe la variable: '+id ,this.getNombre());
     
-        this.variables.set(id, new Simbolo(valor, id, type,this.getNombre(),linea.toString(),columna.toString()));
+        this.variables.set(id, new Simbolo(valor, id, type,this.getNombre(),linea.toString(),columna.toString(),constante));
     }
     //para el tipo       nombVar = exp;
     public asignar(id: string, valor: any,type: Type,linea:number,columna:number){
         const sim:Simbolo = this.getVar(id); 
         if(sim==null)
             throw new Error_(linea, columna, 'Semantico','ASIGNACIÓN: no existe la variable:' + id,this.getNombre());
+        if(sim.constante)
+            throw new Error_(linea, columna, 'Semantico','ASIGNACIÓN: es una constante: ' + id,this.getNombre());
         
         
         if(sim.tipo==undefined){
             sim.tipo=type;
         }
-        if(type!= sim.tipo)
+        if(type!= sim.tipo && sim.tipo!=Type.NULL)
             throw new Error_(linea, columna,  'Semantico',
                 'ASIGNACIÓN: no coincide el tipo con el valor asginado, Tipovalor:' + type+", tipo: "+sim.tipo ,this.getNombre());        
         sim.valor=valor;

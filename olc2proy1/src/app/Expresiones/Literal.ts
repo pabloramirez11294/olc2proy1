@@ -14,5 +14,7 @@ export class Literal extends Expression{
             return {value : this.value, type : Type.STRING};
         else if(this.type == Type.BOOLEAN)
             return {value : this.value, type : Type.BOOLEAN};
+        else if(this.type == Type.NULL)
+            return {value : this.value, type : Type.NULL};
     }
 }
