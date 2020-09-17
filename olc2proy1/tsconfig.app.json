@@ -17,6 +17,7 @@
     "src/app/Expresiones/*.ts",
     "src/app/Instruccion/*.ts",
     "src/app/Modelos/*.ts",
-    "src/app/Reportes/*.ts"
+    "src/app/Reportes/*.ts",
+    "src/app/Estructuras/*.ts"
   ]
 }

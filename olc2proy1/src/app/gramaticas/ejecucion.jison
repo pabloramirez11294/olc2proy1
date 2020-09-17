@@ -22,6 +22,8 @@
     const {InstrucUnaria} = require('../Instruccion/InstrucUnaria');
     const {Funcion} = require('../Instruccion/Funcion');
     const {Llamada} = require('../Instruccion/Llamada');
+    const {Arreglo} = require('../Estructuras/Arreglo');
+    const {Acceso} = require('../Estructuras/Acceso');
     const {Simbolo} = require('../Entornos/Environment');
 %}
 
@@ -216,8 +218,23 @@ Instruc
         | Unario ';' {$$ = new InstrucUnaria($1,@1.first_line, @1.first_column);}
         | Llamada ';' { $$ = $1; } 
         | 'RETURN' Exp ';' { $$ = new Return($2,@1.first_line, @1.first_column); }
+        | ID Indices '=' Exp ';'
+        {
+            $$ = new Acceso($1,$2,$4,@1.first_line, @1.first_column);
+        }
 
 ;
+
+Indices
+        : Indices '[' Exp ']'
+        {
+            $$.push($3);
+        }
+        |'[' Exp ']' {
+            $$ = [$2];
+        }
+;
+
 //*********************SENTENCIAS DE CONTROL
 Sentencia_if
             : 'IF' '(' Exp ')' InstruccionesSent Sentencia_else
@@ -327,23 +344,37 @@ OpcionDeclaracion
                     $$ = new Declaracion($1,undefined,undefined,false, @1.first_line, @1.first_column);
                 }
                 | ID ':' Tipo Dim '=' Dimensiones 
+                {
+                    $$ = new Arreglo($1,Type.ARREGLO,$3,$4,false,@1.first_line, @1.first_column);
+                }                
+                | ID ':' Tipo Dim  
+                {
+                    $$ = new Arreglo($1,Type.ARREGLO,$3,$4,false,@1.first_line, @1.first_column);
+                }
 ;
 
 Dim
             : Dim '['']'
+            {
+                 $$=[$1];
+            }
             | '['']'
+            {
+                $$ = [new Array()];
+            }
 ;
 
 Dimensiones
-            : '[' OpcDim ']' 
-;
-
+            : '['  ']' ;
+/*
 OpcDim
         : Expre
         | Dimensiones 
-        |
+        | {
+                $$ = [new Array()]
+            }
 ;
-
+*/
 ListaDeclaracionConst
                 : ListaDeclaracionConst ',' OpcionDeclaracionConst { $1.push($3); }
                 | OpcionDeclaracionConst { $$ = [$1]; }
