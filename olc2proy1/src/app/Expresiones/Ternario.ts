@@ -14,12 +14,15 @@ export class Ternario extends Expression{
         if(condicion.type != Type.BOOLEAN){
             throw new Error_(this.line, this.column, 'Semantico', 'La expresion no regresa un valor booleano: ' + condicion.value+", es de tipo: "+condicion.type ,amb.getNombre());
         }
-        const leftValue = this.left.execute(amb);
-        const rightValue = this.right.execute(amb);
+              
         
         if(condicion.value){
+            const leftValue = this.left.execute(amb);
             return leftValue;
-        }else
-            return rightValue;
+        }else{
+             const rightValue = this.right.execute(amb);
+             return rightValue;
+        }
+            
     }
 }
