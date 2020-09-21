@@ -226,12 +226,8 @@ Instruc
 ;
 
 Indices
-        : Indices '[' Exp ']'
-        {
-            $$.push($3);
-        }
-        |'[' Exp ']' {
-            $$ = [$2];
+        : '[' Exp ']' {
+            $$ = $2;
         }
 ;
 
@@ -349,18 +345,18 @@ OpcionDeclaracion
                 }                
                 | ID ':' Tipo Dim  
                 {
-                    $$ = new Arreglo($1,Type.ARREGLO,$3,$4,false,@1.first_line, @1.first_column);
+                    $$ = new Arreglo($1,Type.ARREGLO,$3,undefined,false,@1.first_line, @1.first_column);
                 }
 ;
 
 Dim
             : Dim '['']'
             {
-                 $$=[$1];
+                 $$=$1;
             }
             | '['']'
             {
-                $$ = [new Array()];
+                $$ = new Array();
             }
 ;
 

@@ -3,6 +3,7 @@ import { Type } from "../Modelos/Retorno";
 import {Error_} from '../Reportes/Errores';
 import {Funcion} from '../Instruccion/Funcion';
 export class Simbolo{
+    public tipoArreglo:Type;
     public valor :any;
     public id : string;
     public tipo : Type;
@@ -39,6 +40,16 @@ export class Environment{
     
         this.variables.set(id, new Simbolo(valor, id, type,this.getNombre(),linea.toString(),columna.toString(),constante));
     }
+    public guardarArr(id: string, valor: any, type: Type,tipoArreglo:Type,linea:number,columna:number,constante:boolean){
+        if(this.variables.has(id))
+            throw new Error_(linea, columna, 'Semantico',
+            'DECLARACION: ya existe la variable: '+id ,this.getNombre());
+        
+        let sim:Simbolo=new Simbolo(valor, id, type,this.getNombre(),linea.toString(),columna.toString(),constante);
+        sim.tipoArreglo=tipoArreglo;
+        this.variables.set(id,sim);
+    }
+    
     //para el tipo       nombVar = exp;
     public asignar(id: string, valor: any,type: Type,linea:number,columna:number){
         const sim:Simbolo = this.getVar(id); 
