@@ -4,6 +4,7 @@ import {Error_} from '../Reportes/Errores';
 import {Funcion} from '../Instruccion/Funcion';
 export class Simbolo{
     public tipoArreglo:Type;
+    public dim:number;
     public valor :any;
     public id : string;
     public tipo : Type;
@@ -40,13 +41,14 @@ export class Environment{
     
         this.variables.set(id, new Simbolo(valor, id, type,this.getNombre(),linea.toString(),columna.toString(),constante));
     }
-    public guardarArr(id: string, valor: any, type: Type,tipoArreglo:Type,linea:number,columna:number,constante:boolean){
+    public guardarArr(id: string, valor: any, type: Type,tipoArreglo:Type,dim:number,linea:number,columna:number,constante:boolean){
         if(this.variables.has(id))
             throw new Error_(linea, columna, 'Semantico',
             'DECLARACION: ya existe la variable: '+id ,this.getNombre());
         
         let sim:Simbolo=new Simbolo(valor, id, type,this.getNombre(),linea.toString(),columna.toString(),constante);
         sim.tipoArreglo=tipoArreglo;
+        sim.dim=dim;
         this.variables.set(id,sim);
     }
     

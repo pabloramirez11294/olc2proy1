@@ -7,6 +7,7 @@
     const {Variable} = require('../Expresiones/Variable');
     const {Unario,OperadorOpcion} = require('../Expresiones/Unario');
     const {Ternario} = require('../Expresiones/Ternario');
+    const {AsigArreglo} = require('../Expresiones/AsigArreglo');
     const {Return} = require('../Instruccion/Return');
     const {Console} = require('../Instruccion/Console');
     const {errores,Error_} = require('../Reportes/Errores');
@@ -22,6 +23,7 @@
     const {InstrucUnaria} = require('../Instruccion/InstrucUnaria');
     const {Funcion} = require('../Instruccion/Funcion');
     const {Llamada} = require('../Instruccion/Llamada');
+    const {DecArreglo} = require('../Instruccion/DecArreglo');
     const {Arreglo} = require('../Estructuras/Arreglo');
     const {Acceso} = require('../Estructuras/Acceso');
     const {Simbolo} = require('../Entornos/Environment');
@@ -339,29 +341,34 @@ OpcionDeclaracion
                 {
                     $$ = new Declaracion($1,undefined,undefined,false, @1.first_line, @1.first_column);
                 }
-                | ID ':' Tipo Dim '=' Dimensiones 
+                | ID ':' Tipo Dim '=' Exp 
                 {
-                    $$ = new Arreglo($1,Type.ARREGLO,$3,$4,false,@1.first_line, @1.first_column);
+                     $$ = new DecArreglo($1,Type.ARREGLO,$3,$4,$6,false,@1.first_line, @1.first_column);
                 }                
                 | ID ':' Tipo Dim  
                 {
-                    $$ = new Arreglo($1,Type.ARREGLO,$3,undefined,false,@1.first_line, @1.first_column);
+                    $$ = new DecArreglo($1,Type.ARREGLO,$3,$4,undefined,false,@1.first_line, @1.first_column);
                 }
 ;
 
 Dim
             : Dim '['']'
             {
-                 $$=[ new Arreglo($1,Type.ARREGLO,$1,undefined,false,@1.first_line, @1.first_column)];
+                 $$=$1+1;
             }
             | '['']'
             {
-                $$ = [ new Arreglo($1,Type.ARREGLO,new Array(),undefined,false,@1.first_line, @1.first_column)];
+                $$ =1;
             }
 ;
 
 Dimensiones
-            : '['  ']' ;
+            : '['  ']' 
+            | '[' Expre ']'
+            {
+                $$ = new AsigArreglo($2,Type.ARREGLO,@1.first_line,@1.first_column);
+            }
+;
 /*
 OpcDim
         : Expre
@@ -498,6 +505,7 @@ Exp
         $$ = $2;
     }
     | Unario { $$ = $1}
+    | Dimensiones {  $$ = $1; }
     | F
     {
         $$ = $1;
