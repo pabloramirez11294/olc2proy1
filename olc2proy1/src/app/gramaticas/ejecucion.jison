@@ -221,12 +221,23 @@ Instruc
         | Unario ';' {$$ = new InstrucUnaria($1,@1.first_line, @1.first_column);}
         | Llamada ';' { $$ = $1; } 
         | 'RETURN' Exp ';' { $$ = new Return($2,@1.first_line, @1.first_column); }
-        | AccesoAsig  '=' Exp ';'
+        | ID AccesoAsig  '=' Exp ';'
         {
-                $$ = $1;
+                $$ =  new AccesoAsig($1,$2,$4,@1.first_line, @1.first_column);
         } 
 
 ;
+
+AccesoAsig
+        : AccesoAsig '[' Exp ']' {
+            $$.push($3);
+        }
+        | '[' Exp ']'{
+            $$ =[$2]
+        }
+
+;
+/*
 AccesoAsig
         : AccesoAsig '[' Exp ']' {
             $$= new AccesoAsig(undefined,$3,$1,@1.first_line, @1.first_column);
@@ -234,8 +245,7 @@ AccesoAsig
         | ID '[' Exp ']'{
             $$ = new AccesoAsig($1,$3,null,@1.first_line, @1.first_column);
         }
-;
-
+*/
 //*********************SENTENCIAS DE CONTROL
 Sentencia_if
             : 'IF' '(' Exp ')' InstruccionesSent Sentencia_else

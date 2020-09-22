@@ -6,12 +6,29 @@ import { Arreglo } from './Arreglo';
 
 export class AccesoAsig extends Instruction{
 
-    constructor(public id: string,private indice : Expression,private ant:Expression|null,public val: Expression,
+    constructor(public id: string,private indice : Array<Expression>,public val: Expression,
         line : number, column: number){
        super(line, column);
    }
 
-    public execute(amb: Environment):Retorno {
+    public execute(amb: Environment) {
+        const sim:Simbolo= amb.getVar(this.id);
+        const arr:Arreglo = sim.valor;
+        //TODO ver validaciones de tipo y rango
+        let res=arr;
+        for(let i=0;i<this.indice.length-1;i++){
+            const indi = this.indice[i].execute(amb);
+            res=arr.getVal(Number(indi.value));
+        }
+        const indi = this.indice[this.indice.length-1].execute(amb);
+        const val = this.val.execute(amb);
+        res.arr[Number(indi.value)]=val.value;
+    }
+
+
+    /*
+
+    
         if(this.ant!=null){
             const ant=this.ant.execute(amb);
             const dim = ant.type-1;
@@ -35,6 +52,27 @@ export class AccesoAsig extends Instruction{
         const indice = this.indice.execute(amb); 
         const res = arr.getVal(Number(indice.value));
         return {value:res,type:sim.dim-1};    
-    }
+
+
+
+
+
+
+
+
+
+    --------------------------
+    const sim:Simbolo= amb.getVar(this.id);
+        const arr:Arreglo = sim.valor;
+        //TODO ver validaciones de tipo y rango
+        let res=arr;
+        for(let i=0;i<sim.dim-1;i++){
+            const indi = this.indice[i].execute(amb);
+            res=arr.getVal(Number(indi.value));
+        }
+        const indi = this.indice[sim.dim-1].execute(amb);
+        const val = this.val.execute(amb);
+        res.arr[Number(indi.value)]=val.value;
+    */
 
 }
