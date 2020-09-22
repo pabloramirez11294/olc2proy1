@@ -12,7 +12,10 @@ export class Acceso extends Instruction{
 
     public execute(amb: Environment) {
         let arreglo:Array<any> = amb.getVar(this.id).valor;
-
+         /*   for (let i=0;arreglo.length;i++) {
+            if(arreglo[i]==undefined)
+                arreglo[i]=null;
+        }*/
         
         
         
