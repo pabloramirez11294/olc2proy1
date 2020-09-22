@@ -10,14 +10,18 @@ export class AsigArreglo extends Expression{
     }
 
     public execute(amb:Environment) : Retorno{
+       
+
         let arr = new Array();
         let tipo:Type=Type.NULL;
-        this.value.forEach(val => {
-            const v =val.execute(amb);
-            //TODO validar que todos sean del mismo tipo 
-            arr.push(v.value);
-            tipo=v.type;
-        });
+        if(this.value!=null){
+            this.value.forEach(val => {
+                const v =val.execute(amb);
+                //TODO validar que todos sean del mismo tipo 
+                arr.push(v.value);
+                tipo=v.type;
+            });
+        }
 
         let arreglo = new Arreglo(tipo,arr);
 

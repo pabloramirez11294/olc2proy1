@@ -2,26 +2,29 @@ import { Instruction } from "../Modelos/Instruction";
 import { Environment } from "../Entornos/Environment";
 import { Expression } from '../Modelos/Expression';
 import { Retorno } from '../Modelos/Retorno';
+import { Arreglo } from './Arreglo';
 
-export class Acceso extends Instruction{
+export class Acceso extends Expression{
 
-    constructor(public id: string,private indices : Array<Expression>,private val:Expression,private asignacion:boolean,
+    constructor(public id: string,private indice : Expression,private ant:Expression|null,
         line : number, column: number){
        super(line, column);
    }
 
-    public execute(amb: Environment) {
-        let arreglo:Array<any> = amb.getVar(this.id).valor;
-         /*   for (let i=0;arreglo.length;i++) {
-            if(arreglo[i]==undefined)
-                arreglo[i]=null;
-        }*/
-        
-        
-        
-        const indi:Retorno = this.indices[this.indices.length-1].execute(amb);
-        const valor:Retorno = this.val.execute(amb); 
-        arreglo[0][indi.value]=valor.value;
+    public execute(amb: Environment):Retorno {
+        if(this.ant!=null){
+            const ant=this.ant.execute(amb);
+            const arr:Arreglo = ant.value;
+            const indice = this.indice.execute(amb);            
+            const res = arr.getVal(Number(indice.value));
+            return {value:res,type:arr.tipoArreglo};
+        }
+
+        const arr:Arreglo = amb.getVar(this.id).valor;
+        //TODO ver validaciones de tipo y rango
+        const indice = this.indice.execute(amb); 
+        const res = arr.getVal(Number(indice.value));
+        return {value:res,type:arr.tipoArreglo};    
     }
 
 }

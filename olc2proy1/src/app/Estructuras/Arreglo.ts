@@ -4,11 +4,14 @@ import {Type} from "../Modelos/Retorno";
 import { Expression } from '../Modelos/Expression';
 
 export class Arreglo {
-    public constante:boolean=false;
-    constructor(private tipoArreglo:Type ,private arr : Array<Expression>){
+    constructor(public tipoArreglo:Type ,public arr : Array<Arreglo>){
    }
 
-    public execute(amb: Environment) {
+    public getVal(indice:number):Arreglo {
+        return this.arr[indice];
+    }
+    public setVal(indice:number,val:any):void {
+        this.arr[indice]=val;
     }
 
 }

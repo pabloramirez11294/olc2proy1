@@ -26,6 +26,7 @@
     const {DecArreglo} = require('../Instruccion/DecArreglo');
     const {Arreglo} = require('../Estructuras/Arreglo');
     const {Acceso} = require('../Estructuras/Acceso');
+    const {AccesoAsig} = require('../Estructuras/AccesoAsig');
     const {Simbolo} = require('../Entornos/Environment');
 %}
 
@@ -220,16 +221,18 @@ Instruc
         | Unario ';' {$$ = new InstrucUnaria($1,@1.first_line, @1.first_column);}
         | Llamada ';' { $$ = $1; } 
         | 'RETURN' Exp ';' { $$ = new Return($2,@1.first_line, @1.first_column); }
-        | ID Indices '=' Exp ';'
+        | AccesoAsig  '=' Exp ';'
         {
-            $$ = new Acceso($1,$2,$4,@1.first_line, @1.first_column);
-        }
+                $$ = $1;
+        } 
 
 ;
-
-Indices
-        : '[' Exp ']' {
-            $$ = $2;
+AccesoAsig
+        : AccesoAsig '[' Exp ']' {
+            $$= new AccesoAsig(undefined,$3,$1,@1.first_line, @1.first_column);
+        }
+        | ID '[' Exp ']'{
+            $$ = new AccesoAsig($1,$3,null,@1.first_line, @1.first_column);
         }
 ;
 
@@ -304,6 +307,7 @@ Actualizacion
 
 //*********************** DECLARACION DE VARIABLES
 
+
 Declaracion
             : 'LET' ListaDeclaracion ';'
             {
@@ -312,7 +316,7 @@ Declaracion
             | ID '=' Exp ';'
             {
                 $$ = new Declaracion($1,undefined,$3,true, @1.first_line, @1.first_column);
-            }
+            }            
             | 'CONST' ListaDeclaracionConst ';' 
             {
                 $$ = new ListDeclaracion($2, @1.first_line, @1.first_column); 
@@ -364,6 +368,9 @@ Dim
 
 Dimensiones
             : '['  ']' 
+            {
+                $$ = new AsigArreglo(null,Type.ARREGLO,@1.first_line,@1.first_column);
+            }
             | '[' Expre ']'
             {
                 $$ = new AsigArreglo($2,Type.ARREGLO,@1.first_line,@1.first_column);
@@ -506,12 +513,24 @@ Exp
     }
     | Unario { $$ = $1}
     | Dimensiones {  $$ = $1; }
+    | AccesoArr
+    {
+        $$ = $1;
+    }
     | F
     {
         $$ = $1;
     }
 ;
 
+AccesoArr
+        : AccesoArr '[' Exp ']' {
+            $$= new Acceso(undefined,$3,$1,@1.first_line, @1.first_column);
+        }
+        | ID '[' Exp ']' {
+            $$ = new Acceso($1,$3,null,@1.first_line, @1.first_column);
+        }
+;
 
 F
     : NUMERO
