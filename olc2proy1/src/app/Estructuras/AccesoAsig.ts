@@ -18,7 +18,7 @@ export class AccesoAsig extends Instruction{
         let res=arr;
         for(let i=0;i<this.indice.length-1;i++){
             const indi = this.indice[i].execute(amb);
-            res=arr.getVal(Number(indi.value));
+            res=res.getVal(Number(indi.value));
         }
         const indi = this.indice[this.indice.length-1].execute(amb);
         const val = this.val.execute(amb);

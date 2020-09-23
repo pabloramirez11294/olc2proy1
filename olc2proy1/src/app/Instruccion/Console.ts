@@ -3,6 +3,7 @@ import { Expression } from "../Modelos/Expression";
 import { Environment } from "../Entornos/Environment";
 import { txtConsola } from '../../environments/environment';
 import {Type} from '../Modelos/Retorno';
+import { Arreglo } from '../Estructuras/Arreglo';
 export class Console extends Instruction{
 
     constructor(public value : Expression, line : number, column : number){
@@ -12,7 +13,7 @@ export class Console extends Instruction{
         const value = this.value.execute(environment);
         console.log(value);
         if(value.type==Type.ARREGLO)
-            this.setConsolaArr(value);
+           this.setConsolaA(value.value);
         else    
             this.setConsola(value);
     }
@@ -20,8 +21,9 @@ export class Console extends Instruction{
     setConsola(contenido:any){   
         txtConsola.consolatxt+=contenido.value+"\n";
     }
-
-    setConsolaArr(contenido:any){   
-        txtConsola.consolatxt+=contenido.value+"\n";
+    setConsolaA(contenido:Arreglo){   
+        txtConsola.consolatxt+=contenido.toString()+"\n";
     }
+
+    
 }

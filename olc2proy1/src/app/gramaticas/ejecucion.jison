@@ -27,6 +27,7 @@
     const {Arreglo} = require('../Estructuras/Arreglo');
     const {Acceso} = require('../Estructuras/Acceso');
     const {AccesoAsig} = require('../Estructuras/AccesoAsig');
+    const {Length} = require('../Estructuras/Length');
     const {Simbolo} = require('../Entornos/Environment');
 %}
 
@@ -71,6 +72,7 @@ string2  (\'[^"]*\')
 "return"                return 'RETURN'
 "do"                    return 'DO'
 "null"                  return 'NULL'
+"length"                return 'LENGTH'
 
 
 "++"                    return '++'
@@ -99,9 +101,9 @@ string2  (\'[^"]*\')
 "}"                     return '}'
 "["                     return '['
 "]"                     return ']'  
-";"                   return ';'
-","                   return ','
-
+";"                     return ';'
+","                     return ','
+"."                     return '.'
 
 ([a-zA-Z_])[a-zA-Z0-9_ñÑ]*	return 'ID'
 <<EOF>>		          return 'EOF'
@@ -118,6 +120,7 @@ string2  (\'[^"]*\')
 %left '**' '%'
 %left '!'
 %left Umenos
+%left '.'
 //%left MENOS
 %start Init
 
@@ -444,6 +447,7 @@ Tipo
     | 'STRING' { $$ = Type.STRING; }
     | 'BOOLEAN' { $$ = Type.BOOLEAN; }
     | 'VOID' { $$ = Type.VOID; }
+    | ID Dim { $$ = Type.ARREGLO; }
 ;
 
 
@@ -575,7 +579,10 @@ F
     {
         $$ = new Literal(null, @1.first_line, @1.first_column, Type.NULL);
     }
-    | ID '.' LlamadaTypes
+    | Exp '.' LENGTH
+    {
+        $$ = new Length($1,@1.first_line, @1.first_column);
+    }
 ;
 
 Unario 
