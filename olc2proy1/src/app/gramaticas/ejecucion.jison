@@ -36,7 +36,7 @@
 entero [0-9]+
 number {entero}("."{entero})?
 string  (\"[^"]*\")
-string2  (\'[^"]*\')
+string2  (\'[^']*\')
 
 %%
 \s+                   /* skip whitespace */
@@ -186,16 +186,30 @@ Funciones
 ;
 
 Parametros
-        : Parametros ',' ID ':' Tipo 
+        : Parametros ',' OpcionParam
         {
-            $1.push(new Simbolo(undefined,$3,$5));
+            $1.push($3);
             $$ = $1;
+        }
+        | OpcionParam
+        {
+            $$ = [$1];
+        }
+;
+OpcionParam
+            :  ID ':' Tipo Dim  
+        {
+            let sim=new Simbolo(undefined,$1,Type.ARREGLO);
+            sim.tipoArreglo=$3;
+            sim.dim = $4;
+            $$ = sim;
         }
         | ID ':' Tipo 
         {
-            $$ = [new Simbolo(undefined,$1,$3)];
+            $$ = new Simbolo(undefined,$1,$3);
         }
 ;
+
 
 Instruc
         : 'CONSOLE' '(' Exp ')' ';'
@@ -224,6 +238,7 @@ Instruc
         | Unario ';' {$$ = new InstrucUnaria($1,@1.first_line, @1.first_column);}
         | Llamada ';' { $$ = $1; } 
         | 'RETURN' Exp ';' { $$ = new Return($2,@1.first_line, @1.first_column); }
+        | 'RETURN' ';' { $$ = new Return(undefined,@1.first_line, @1.first_column); }
         | ID AccesoAsig  '=' Exp ';'
         {
                 $$ =  new AccesoAsig($1,$2,$4,@1.first_line, @1.first_column);
@@ -447,7 +462,6 @@ Tipo
     | 'STRING' { $$ = Type.STRING; }
     | 'BOOLEAN' { $$ = Type.BOOLEAN; }
     | 'VOID' { $$ = Type.VOID; }
-    | ID Dim { $$ = Type.ARREGLO; }
 ;
 
 

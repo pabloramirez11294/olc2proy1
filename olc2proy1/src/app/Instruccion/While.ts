@@ -23,6 +23,8 @@ export class While extends Instruction{
                     break;
                 else if(code.type == TipoEscape.CONTINUE)
                     continue;
+                else
+                    return code;
             }
             condicion = this.condicion.execute(amb);
             if(condicion.type != Type.BOOLEAN){
@@ -49,6 +51,8 @@ export class DoWhile extends Instruction{
                     break;
                 else if(code.type == TipoEscape.CONTINUE)
                     continue;
+                else
+                    return code;
             }
             condicion = this.condicion.execute(amb);
             if(condicion.type != Type.BOOLEAN){
