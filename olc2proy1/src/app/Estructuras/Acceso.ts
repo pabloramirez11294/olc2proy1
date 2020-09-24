@@ -1,5 +1,5 @@
 import { Instruction } from "../Modelos/Instruction";
-import { Environment } from "../Entornos/Environment";
+import { Environment, Simbolo } from "../Entornos/Environment";
 import { Expression } from '../Modelos/Expression';
 import { Retorno } from '../Modelos/Retorno';
 import { Arreglo } from './Arreglo';
@@ -20,11 +20,12 @@ export class Acceso extends Expression{
             return {value:res,type:arr.tipoArreglo};
         }
 
-        const arr:Arreglo = amb.getVar(this.id).valor;
+        const sim:Simbolo = amb.getVar(this.id);
+        const arr:Arreglo=sim.valor;
         //TODO ver validaciones de tipo y rango
         const indice = this.indice.execute(amb); 
         const res = arr.getVal(Number(indice.value));
-        return {value:res,type:arr.tipoArreglo};    
+        return {value:res,type:sim.tipoArreglo};    
     }
 
 }

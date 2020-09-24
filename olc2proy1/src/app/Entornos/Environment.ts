@@ -64,7 +64,7 @@ export class Environment{
         if(sim.tipo==undefined){
             sim.tipo=type;
         }
-        if(type!= sim.tipo && sim.tipo!=Type.NULL)
+        if(type!= sim.tipo && sim.tipo!=Type.NULL && (type!=Type.ARREGLO && sim.tipo!= Type.ARREGLO))
             throw new Error_(linea, columna,  'Semantico',
                 'ASIGNACIÓN: no coincide el tipo con el valor asginado, Tipovalor:' + type+", tipo: "+sim.tipo ,this.getNombre());        
         sim.valor=valor;

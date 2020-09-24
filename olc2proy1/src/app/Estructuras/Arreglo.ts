@@ -20,7 +20,7 @@ export class Arreglo {
         for(var t of this.arr){
             txt+=t.toString()+',';
         }
-        return txt.slice(0,txt.length-1)+']\n';
+        return txt.slice(0,txt.length-1)+']';
     }
 
     public length():number{

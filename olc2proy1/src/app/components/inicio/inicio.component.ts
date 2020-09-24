@@ -119,7 +119,7 @@ export class InicioComponent implements OnInit {
     this.repErrores=new Array<Array<string>>();
     for(var err of errores){
       const e:Array<string>=new Array<string>(err.tipo,err.descripcion,err.linea?.toString(),
-                                                          err.columna.toString());
+                                                          err.columna?.toString());
       this.repErrores.push(e);                            
     }
   }

@@ -1,7 +1,7 @@
 import { Instruction } from "../Modelos/Instruction";
 import { Environment, Simbolo } from "../Entornos/Environment";
 import { Expression } from '../Modelos/Expression';
-import { Retorno } from '../Modelos/Retorno';
+import { Retorno, Type } from '../Modelos/Retorno';
 import { Arreglo } from './Arreglo';
 
 export class AccesoAsig extends Instruction{
@@ -14,6 +14,7 @@ export class AccesoAsig extends Instruction{
     public execute(amb: Environment) {
         const sim:Simbolo= amb.getVar(this.id);
         const arr:Arreglo = sim.valor;
+        const val = this.val.execute(amb);
         //TODO ver validaciones de tipo y rango
         let res=arr;
         for(let i=0;i<this.indice.length-1;i++){
@@ -21,7 +22,11 @@ export class AccesoAsig extends Instruction{
             res=res.getVal(Number(indi.value));
         }
         const indi = this.indice[this.indice.length-1].execute(amb);
-        const val = this.val.execute(amb);
+        
+        //si no se le había asginado un tipoarreglo entonces se le coloca el del valor
+
+        if(sim.tipoArreglo==Type.ARREGLO)
+            sim.tipoArreglo=val.type;
         res.arr[Number(indi.value)]=val.value;
     }
 

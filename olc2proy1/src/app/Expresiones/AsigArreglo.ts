@@ -13,7 +13,7 @@ export class AsigArreglo extends Expression{
        
 
         let arr = new Array();
-        let tipo:Type=Type.NULL;
+        let tipo:Type=Type.ARREGLO;
         if(this.value!=null){
             this.value.forEach(val => {
                 const v =val.execute(amb);
@@ -25,6 +25,6 @@ export class AsigArreglo extends Expression{
 
         let arreglo = new Arreglo(tipo,arr);
 
-        return {value:arreglo,type:Type.ARREGLO};
+        return {value:arreglo,type:tipo};
     }
 }
