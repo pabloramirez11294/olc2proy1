@@ -19,7 +19,11 @@ export class Relacional extends Expression{
         const leftValue = this.left.execute(amb);
         const rightValue = this.right.execute(amb);
         let result : Retorno={value:null,type:null};
-        this.mismoTipo(leftValue.type, rightValue.type,amb.getNombre());
+        if(leftValue.type==Type.ARREGLO && rightValue.type==Type.ARREGLO){
+            
+        }else            
+            this.mismoTipo(leftValue.type, rightValue.type,amb.getNombre());
+        
         if(this.type == RelationalOption.MENOR){     
             result.value = leftValue.value < rightValue.value;         
             result.type = Type.BOOLEAN;

@@ -3,15 +3,28 @@ import { Environment } from "../Entornos/Environment";
 import {Type} from "../Modelos/Retorno";
 import { Expression } from '../Modelos/Expression';
 
-export class Arreglo extends Instruction{
-    public constante:boolean=false;
-    constructor(public id: string,private tipo:Type,private tipoArreglo:Type ,private arr : Array<Expression>,private asignacion:boolean,
-        line : number, column: number){
-       super(line, column);
+export class Arreglo {
+    constructor(public tipoArreglo:Type ,public arr : Array<any>){
    }
 
-    public execute(amb: Environment) {
-        amb.guardarArr(this.id,this.arr,this.tipo,this.tipoArreglo ,this.line,this.column,this.constante);
+    public getVal(indice:number):Arreglo {
+        return this.arr[indice];
+    }
+    public setVal(indice:number,val:any):void {
+        this.arr[indice]=val;
+    }
+
+    
+    public toString():string{
+        let txt='[';
+        for(var t of this.arr){
+            txt+=t.toString()+',';
+        }
+        return txt.slice(0,txt.length-1)+']';
+    }
+
+    public length():number{
+        return this.arr.length;
     }
 
 }

@@ -30,6 +30,8 @@ export class For extends Instruction{
                     break;
                 else if(code.type == TipoEscape.CONTINUE)
                     continue;
+                else
+                    return code;
             }
             this.Actualizacion.execute(ambFor);
             condicion = this.condicion.execute(ambFor);

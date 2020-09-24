@@ -7,6 +7,7 @@
     const {Variable} = require('../Expresiones/Variable');
     const {Unario,OperadorOpcion} = require('../Expresiones/Unario');
     const {Ternario} = require('../Expresiones/Ternario');
+    const {AsigArreglo} = require('../Expresiones/AsigArreglo');
     const {Return} = require('../Instruccion/Return');
     const {Console} = require('../Instruccion/Console');
     const {errores,Error_} = require('../Reportes/Errores');
@@ -22,8 +23,11 @@
     const {InstrucUnaria} = require('../Instruccion/InstrucUnaria');
     const {Funcion} = require('../Instruccion/Funcion');
     const {Llamada} = require('../Instruccion/Llamada');
+    const {DecArreglo} = require('../Instruccion/DecArreglo');
     const {Arreglo} = require('../Estructuras/Arreglo');
     const {Acceso} = require('../Estructuras/Acceso');
+    const {AccesoAsig} = require('../Estructuras/AccesoAsig');
+    const {Length} = require('../Estructuras/Length');
     const {Simbolo} = require('../Entornos/Environment');
 %}
 
@@ -32,7 +36,7 @@
 entero [0-9]+
 number {entero}("."{entero})?
 string  (\"[^"]*\")
-string2  (\'[^"]*\')
+string2  (\'[^']*\')
 
 %%
 \s+                   /* skip whitespace */
@@ -68,6 +72,7 @@ string2  (\'[^"]*\')
 "return"                return 'RETURN'
 "do"                    return 'DO'
 "null"                  return 'NULL'
+"length"                return 'LENGTH'
 
 
 "++"                    return '++'
@@ -96,9 +101,9 @@ string2  (\'[^"]*\')
 "}"                     return '}'
 "["                     return '['
 "]"                     return ']'  
-";"                   return ';'
-","                   return ','
-
+";"                     return ';'
+","                     return ','
+"."                     return '.'
 
 ([a-zA-Z_])[a-zA-Z0-9_ñÑ]*	return 'ID'
 <<EOF>>		          return 'EOF'
@@ -115,6 +120,7 @@ string2  (\'[^"]*\')
 %left '**' '%'
 %left '!'
 %left Umenos
+%left '.'
 //%left MENOS
 %start Init
 
@@ -180,16 +186,30 @@ Funciones
 ;
 
 Parametros
-        : Parametros ',' ID ':' Tipo 
+        : Parametros ',' OpcionParam
         {
-            $1.push(new Simbolo(undefined,$3,$5));
+            $1.push($3);
             $$ = $1;
+        }
+        | OpcionParam
+        {
+            $$ = [$1];
+        }
+;
+OpcionParam
+            :  ID ':' Tipo Dim  
+        {
+            let sim=new Simbolo(undefined,$1,Type.ARREGLO);
+            sim.tipoArreglo=$3;
+            sim.dim = $4;
+            $$ = sim;
         }
         | ID ':' Tipo 
         {
-            $$ = [new Simbolo(undefined,$1,$3)];
+            $$ = new Simbolo(undefined,$1,$3);
         }
 ;
+
 
 Instruc
         : 'CONSOLE' '(' Exp ')' ';'
@@ -218,19 +238,32 @@ Instruc
         | Unario ';' {$$ = new InstrucUnaria($1,@1.first_line, @1.first_column);}
         | Llamada ';' { $$ = $1; } 
         | 'RETURN' Exp ';' { $$ = new Return($2,@1.first_line, @1.first_column); }
-        | ID Indices '=' Exp ';'
+        | 'RETURN' ';' { $$ = new Return(undefined,@1.first_line, @1.first_column); }
+        | ID AccesoAsig  '=' Exp ';'
         {
-            $$ = new Acceso($1,$2,$4,@1.first_line, @1.first_column);
-        }
+                $$ =  new AccesoAsig($1,$2,$4,@1.first_line, @1.first_column);
+        } 
 
 ;
 
-Indices
-        : '[' Exp ']' {
-            $$ = $2;
+AccesoAsig
+        : AccesoAsig '[' Exp ']' {
+            $$.push($3);
         }
-;
+        | '[' Exp ']'{
+            $$ =[$2]
+        }
 
+;
+/*
+AccesoAsig
+        : AccesoAsig '[' Exp ']' {
+            $$= new AccesoAsig(undefined,$3,$1,@1.first_line, @1.first_column);
+        }
+        | ID '[' Exp ']'{
+            $$ = new AccesoAsig($1,$3,null,@1.first_line, @1.first_column);
+        }
+*/
 //*********************SENTENCIAS DE CONTROL
 Sentencia_if
             : 'IF' '(' Exp ')' InstruccionesSent Sentencia_else
@@ -302,6 +335,7 @@ Actualizacion
 
 //*********************** DECLARACION DE VARIABLES
 
+
 Declaracion
             : 'LET' ListaDeclaracion ';'
             {
@@ -310,7 +344,7 @@ Declaracion
             | ID '=' Exp ';'
             {
                 $$ = new Declaracion($1,undefined,$3,true, @1.first_line, @1.first_column);
-            }
+            }            
             | 'CONST' ListaDeclaracionConst ';' 
             {
                 $$ = new ListDeclaracion($2, @1.first_line, @1.first_column); 
@@ -339,29 +373,37 @@ OpcionDeclaracion
                 {
                     $$ = new Declaracion($1,undefined,undefined,false, @1.first_line, @1.first_column);
                 }
-                | ID ':' Tipo Dim '=' Dimensiones 
+                | ID ':' Tipo Dim '=' Exp 
                 {
-                    $$ = new Arreglo($1,Type.ARREGLO,$3,$4,false,@1.first_line, @1.first_column);
+                     $$ = new DecArreglo($1,Type.ARREGLO,$3,$4,$6,false,@1.first_line, @1.first_column);
                 }                
                 | ID ':' Tipo Dim  
                 {
-                    $$ = new Arreglo($1,Type.ARREGLO,$3,undefined,false,@1.first_line, @1.first_column);
+                    $$ = new DecArreglo($1,Type.ARREGLO,$3,$4,undefined,false,@1.first_line, @1.first_column);
                 }
 ;
 
 Dim
             : Dim '['']'
             {
-                 $$=$1;
+                 $$=$1+1;
             }
             | '['']'
             {
-                $$ = new Array();
+                $$ =1;
             }
 ;
 
 Dimensiones
-            : '['  ']' ;
+            : '['  ']' 
+            {
+                $$ = new AsigArreglo(null,Type.ARREGLO,@1.first_line,@1.first_column);
+            }
+            | '[' Expre ']'
+            {
+                $$ = new AsigArreglo($2,Type.ARREGLO,@1.first_line,@1.first_column);
+            }
+;
 /*
 OpcDim
         : Expre
@@ -498,12 +540,25 @@ Exp
         $$ = $2;
     }
     | Unario { $$ = $1}
+    | Dimensiones {  $$ = $1; }
+    | AccesoArr
+    {
+        $$ = $1;
+    }
     | F
     {
         $$ = $1;
     }
 ;
 
+AccesoArr
+        : AccesoArr '[' Exp ']' {
+            $$= new Acceso(undefined,$3,$1,@1.first_line, @1.first_column);
+        }
+        | ID '[' Exp ']' {
+            $$ = new Acceso($1,$3,null,@1.first_line, @1.first_column);
+        }
+;
 
 F
     : NUMERO
@@ -512,11 +567,17 @@ F
     }
     | CADENA
     {
-        $$ = new Literal($1.replace(/\"/g,""), @1.first_line, @1.first_column, Type.STRING);
+        let txt=$1.replace(/\\n/g,"\n");
+        txt = txt.replace(/\\t/g,"\t");
+        txt = txt.replace(/\\r/g,"\r");
+        $$ = new Literal(txt.replace(/\"/g,""), @1.first_line, @1.first_column, Type.STRING);
     }
     | CADENA2
     {
-        $$ = new Literal($1.replace(/\'/g,""), @1.first_line, @1.first_column, Type.STRING);
+        let txt2=$1.replace(/\\n/g,"\n");
+        txt2 = txt2.replace(/\\t/g,"\t");
+        txt2 = txt2.replace(/\\r/g,"\r");
+        $$ = new Literal(txt2.replace(/\'/g,""), @1.first_line, @1.first_column, Type.STRING);
     }
     | TRUE
     {
@@ -538,7 +599,10 @@ F
     {
         $$ = new Literal(null, @1.first_line, @1.first_column, Type.NULL);
     }
-    | ID '.' LlamadaTypes
+    | Exp '.' LENGTH
+    {
+        $$ = new Length($1,@1.first_line, @1.first_column);
+    }
 ;
 
 Unario 
