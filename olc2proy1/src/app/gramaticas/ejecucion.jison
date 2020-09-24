@@ -212,7 +212,7 @@ OpcionParam
 
 
 Instruc
-        : 'CONSOLE' '(' Exp ')' ';'
+        : 'CONSOLE' '(' Expre ')' ';'
         {
              $$ = new Console($3, @1.first_line, @1.first_column);
         }

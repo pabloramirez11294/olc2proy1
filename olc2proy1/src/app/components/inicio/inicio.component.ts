@@ -4,7 +4,7 @@ import {  Error_ ,errores} from '../../Reportes/Errores';
 import { Environment, Simbolo } from '../../Entornos/Environment';
 import {TipoEscape} from '../../Instruccion/BreakContinue';
 import { Funcion } from '../../Instruccion/Funcion';
-import { txtConsola,reporte } from '../../../environments/environment';
+import { txtConsola,reporte } from '../../Reportes/Consola';
 import { graphviz }  from 'd3-graphviz';
 import { wasmFolder } from "@hpcc-js/wasm";
 import { Instruction } from 'src/app/Modelos/Instruction';
