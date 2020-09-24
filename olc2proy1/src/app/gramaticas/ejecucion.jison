@@ -567,11 +567,17 @@ F
     }
     | CADENA
     {
-        $$ = new Literal($1.replace(/\"/g,""), @1.first_line, @1.first_column, Type.STRING);
+        let txt=$1.replace(/\\n/g,"\n");
+        txt = txt.replace(/\\t/g,"\t");
+        txt = txt.replace(/\\r/g,"\r");
+        $$ = new Literal(txt.replace(/\"/g,""), @1.first_line, @1.first_column, Type.STRING);
     }
     | CADENA2
     {
-        $$ = new Literal($1.replace(/\'/g,""), @1.first_line, @1.first_column, Type.STRING);
+        let txt2=$1.replace(/\\n/g,"\n");
+        txt2 = txt2.replace(/\\t/g,"\t");
+        txt2 = txt2.replace(/\\r/g,"\r");
+        $$ = new Literal(txt2.replace(/\'/g,""), @1.first_line, @1.first_column, Type.STRING);
     }
     | TRUE
     {

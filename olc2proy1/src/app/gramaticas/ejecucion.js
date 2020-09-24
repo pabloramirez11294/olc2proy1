@@ -484,12 +484,18 @@ case 100:
 break;
 case 101:
 
-        this.$ = new Literal($$[$0].replace(/\"/g,""), _$[$0].first_line, _$[$0].first_column, Type.STRING);
+        let txt=$$[$0].replace(/\\n/g,"\n");
+        txt = txt.replace(/\\t/g,"\t");
+        txt = txt.replace(/\\r/g,"\r");
+        this.$ = new Literal(txt.replace(/\"/g,""), _$[$0].first_line, _$[$0].first_column, Type.STRING);
     
 break;
 case 102:
 
-        this.$ = new Literal($$[$0].replace(/\'/g,""), _$[$0].first_line, _$[$0].first_column, Type.STRING);
+        let txt2=$$[$0].replace(/\\n/g,"\n");
+        txt2 = txt2.replace(/\\t/g,"\t");
+        txt2 = txt2.replace(/\\r/g,"\r");
+        this.$ = new Literal(txt2.replace(/\'/g,""), _$[$0].first_line, _$[$0].first_column, Type.STRING);
     
 break;
 case 103:
