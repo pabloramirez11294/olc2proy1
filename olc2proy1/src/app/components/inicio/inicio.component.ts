@@ -88,7 +88,6 @@ export class InicioComponent implements OnInit {
         errores.push(new Error_(error.lineNumber, 0, 'Lexico', error.message, ''));
     }
     const tablaVar=entorno.getTablaSimbolos();
-    reporte.simbolos=tablaVar;
     console.log('Tabla de Simbolos: ', tablaVar);
     this.setTablaSimbolos(tablaVar);
     console.log('Funciones: ', entorno.getFunciones());
@@ -107,6 +106,9 @@ export class InicioComponent implements OnInit {
   }
   setTablaSimbolos(simbolos:Map<string,Simbolo>):void{
     this.simbolos=new Array<Array<string>>();
+    reporte.simbolos.forEach(element => {
+      this.simbolos.push(element);
+    });
     for (var simbolo of simbolos.values()) {
       const s:Array<string>=new Array<string>(simbolo.id,simbolo.valor,simbolo.tipo.toString(),
                                                   simbolo.ambito,simbolo.linea,simbolo.columna);
