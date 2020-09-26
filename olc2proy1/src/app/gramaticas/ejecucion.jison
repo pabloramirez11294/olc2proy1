@@ -29,6 +29,7 @@
     const {AccesoAsig} = require('../Estructuras/AccesoAsig');
     const {Length} = require('../Estructuras/Length');
     const {Simbolo} = require('../Entornos/Environment');
+    const {Graficarts} = require('../Reportes/Graficarts');
 %}
 
 %lex
@@ -58,6 +59,7 @@ string2  (\'[^']*\')
 "let"                  return 'LET'
 "const"                 return 'CONST'
 "console.log"           return 'CONSOLE'
+"graficar_ts"           return 'GRAFICARTS'
 //sentenicas de control y ciclos
 "if"                    return 'IF'
 "else"                  return 'ELSE'
@@ -215,6 +217,10 @@ Instruc
         : 'CONSOLE' '(' Expre ')' ';'
         {
              $$ = new Console($3, @1.first_line, @1.first_column);
+        }
+        |  'GRAFICARTS' '('  ')' ';'
+        {
+             $$ = new Graficarts(@1.first_line, @1.first_column);
         }
         | Sentencia_if {
             $$ = $1;

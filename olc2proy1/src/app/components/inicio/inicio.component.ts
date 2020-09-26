@@ -16,6 +16,7 @@ import { Instrucciones } from 'src/app/Instruccion/Instrucciones';
 import { If } from 'src/app/Instruccion/If';
 import { Relacional } from 'src/app/Expresiones/Relacional';
 import { Aritmetico } from 'src/app/Expresiones/Aritmetico';
+import { TryCatchStmt } from '@angular/compiler';
 
 @Component({
   selector: 'app-inicio',
@@ -31,6 +32,7 @@ export class InicioComponent implements OnInit {
   title = 'olc2proy1';
   simbolos:Array<Array<string>>;
   repErrores:Array<Array<string>>;
+  tipo_ts:string="";
   editor = `console.log(3);
   let a:number=1.99;
   let b:string="hola mundo";
@@ -45,7 +47,9 @@ export class InicioComponent implements OnInit {
   consola = '';
 
   ejecutar() {
+    this.tipo_ts="Ejecución";
     errores.length=0;
+    reporte.simbolos.length=0;
     const entorno = new Environment(null, 'global');
     try {
       const instrucciones = Ejecucion.parse(this.editor);    
@@ -87,13 +91,20 @@ export class InicioComponent implements OnInit {
       }else
         errores.push(new Error_(error.lineNumber, 0, 'Lexico', error.message, ''));
     }
-    const tablaVar=entorno.getTablaSimbolos();
-    reporte.simbolos=tablaVar;
-    console.log('Tabla de Simbolos: ', tablaVar);
-    this.setTablaSimbolos(tablaVar);
-    console.log('Funciones: ', entorno.getFunciones());
-    console.log('Reporte errores:', errores);
-    this.setReporteErrores();
+    //REPORTES
+    try {
+      const tablaVar=entorno.getTablaSimbolos();
+      console.log('Tabla de Simbolos: ', tablaVar);
+      this.setTablaSimbolos(tablaVar);
+      console.log('Funciones: ', entorno.getFunciones());
+      const tablaFunc=entorno.getFunciones();
+      this.setTablaFunciones(tablaFunc);
+      console.log('Reporte errores:', errores);
+      this.setReporteErrores();
+    } catch (error) {
+      console.log(error);
+    }
+    
   }
 
   setConsola() {
@@ -107,9 +118,24 @@ export class InicioComponent implements OnInit {
   }
   setTablaSimbolos(simbolos:Map<string,Simbolo>):void{
     this.simbolos=new Array<Array<string>>();
+    reporte.simbolos.forEach(element => {
+      this.simbolos.push(element);
+    });
     for (var simbolo of simbolos.values()) {
       const s:Array<string>=new Array<string>(simbolo.id,simbolo.valor,simbolo.tipo.toString(),
                                                   simbolo.ambito,simbolo.linea,simbolo.columna);
+      this.simbolos.push(s);
+    }
+    console.log(this.simbolos);
+  }
+  setTablaFunciones(simbolos:Map<string,Funcion>):void{
+    this.simbolos=new Array<Array<string>>();
+    reporte.simbolos.forEach(element => {
+      this.simbolos.push(element);
+    });
+    for (var func of simbolos.values()) {
+      const s:Array<string>=new Array<string>(func.id,'',func.tipo.toString(),
+                                                  '',func.line?.toString(),func.column?.toString());
       this.simbolos.push(s);
     }
     console.log(this.simbolos);
