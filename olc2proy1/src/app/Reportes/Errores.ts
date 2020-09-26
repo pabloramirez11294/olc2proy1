@@ -1,8 +1,8 @@
 import { Environment } from "../Entornos/Environment.js";
 export class Error_{
     
-    constructor(private linea : number, private columna: number, private tipo : string, 
-        private descripcion : string, private ambito: string){
+    constructor(public linea : number, public columna: number, public tipo : string, 
+        public descripcion : string, public ambito: string){
             
     }
     public execute() {

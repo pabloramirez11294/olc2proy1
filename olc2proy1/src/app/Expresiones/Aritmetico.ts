@@ -13,7 +13,7 @@ export enum ArithmeticOption{
 
 export class Aritmetico extends Expression{
 
-    constructor(private left: Expression, private right: Expression, private type : ArithmeticOption, line: number, column: number){
+    constructor(public left: Expression, public right: Expression, public type : ArithmeticOption, line: number, column: number){
         super(line,column);
     }
 
@@ -30,7 +30,13 @@ export class Aritmetico extends Expression{
             result = {value : (leftValue.value *-1), type : Type.NUMBER};
             return result;
         }
-        const tipoDominante = this.tipoDominante(leftValue.type, rightValue.type,amb.getNombre());
+        let tipoDominante;
+        if((leftValue.type==Type.ARREGLO && rightValue.type==Type.ARREGLO)
+            ||(leftValue.type==Type.NUMBER && rightValue.type==Type.ARREGLO)
+            ||(leftValue.type==Type.ARREGLO && rightValue.type==Type.NUMBER)){
+            tipoDominante=Type.NUMBER;
+        }else
+            tipoDominante = this.tipoDominante(leftValue.type, rightValue.type,amb.getNombre());
         if(this.type == ArithmeticOption.SUMA){
             if(tipoDominante == Type.STRING)
                 result = {value : (leftValue.value.toString() + rightValue.value.toString()), type : Type.STRING};

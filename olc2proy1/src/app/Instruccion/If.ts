@@ -5,7 +5,7 @@ import { Type } from "../Modelos/Retorno";
 import {Error_} from '../Reportes/Errores';
 export class If extends Instruction{
 
-    constructor(private condicion : Expression, private codeIF : Instruction, private codeElse : Instruction | null,
+    constructor(public condicion : Expression, public codeIF : Instruction, public codeElse : Instruction | null,
         line : number, column : number){
         super(line, column);
     }

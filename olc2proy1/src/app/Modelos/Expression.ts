@@ -1,6 +1,7 @@
 import { Retorno, Type } from "./Retorno";
 import { Environment } from "../Entornos/Environment";
 import {Error_} from '../Reportes/Errores';
+import { type } from 'os';
 export abstract class Expression {
 
     public line: number;
@@ -27,7 +28,6 @@ export abstract class Expression {
     }
 
     public tipoDominante(tipo1 : number, tipo2 : number,nombreAmb:string) : Type{
-        
         if(tipo1 == Type.NULL || tipo2 == Type.NULL)
             return Type.NULL;
         else if(tipo1 == Type.STRING || tipo2 == Type.STRING)

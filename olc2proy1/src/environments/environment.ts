@@ -8,6 +8,9 @@ export const environment = {
 export const txtConsola = {
   consolatxt:""
 };
+export const reporte = {
+  simbolos:new Map()
+};
 
 /*
  * For easier debugging in development mode, you can import the following file

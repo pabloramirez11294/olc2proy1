@@ -6,6 +6,8 @@
     const {Literal} = require('../Expresiones/Literal');
     const {Variable} = require('../Expresiones/Variable');
     const {Unario,OperadorOpcion} = require('../Expresiones/Unario');
+    const {Ternario} = require('../Expresiones/Ternario');
+    const {AsigArreglo} = require('../Expresiones/AsigArreglo');
     const {Return} = require('../Instruccion/Return');
     const {Console} = require('../Instruccion/Console');
     const {errores,Error_} = require('../Reportes/Errores');
@@ -21,7 +23,13 @@
     const {InstrucUnaria} = require('../Instruccion/InstrucUnaria');
     const {Funcion} = require('../Instruccion/Funcion');
     const {Llamada} = require('../Instruccion/Llamada');
+    const {DecArreglo} = require('../Instruccion/DecArreglo');
+    const {Arreglo} = require('../Estructuras/Arreglo');
+    const {Acceso} = require('../Estructuras/Acceso');
+    const {AccesoAsig} = require('../Estructuras/AccesoAsig');
+    const {Length} = require('../Estructuras/Length');
     const {Simbolo} = require('../Entornos/Environment');
+    const {Graficarts} = require('../Reportes/Graficarts');
 %}
 
 %lex
@@ -29,7 +37,7 @@
 entero [0-9]+
 number {entero}("."{entero})?
 string  (\"[^"]*\")
-string2  (\'[^"]*\')
+string2  (\'[^']*\')
 
 %%
 \s+                   /* skip whitespace */
@@ -51,6 +59,7 @@ string2  (\'[^"]*\')
 "let"                  return 'LET'
 "const"                 return 'CONST'
 "console.log"           return 'CONSOLE'
+"graficar_ts"           return 'GRAFICARTS'
 //sentenicas de control y ciclos
 "if"                    return 'IF'
 "else"                  return 'ELSE'
@@ -64,6 +73,8 @@ string2  (\'[^"]*\')
 "function"              return 'FUNCTION'
 "return"                return 'RETURN'
 "do"                    return 'DO'
+"null"                  return 'NULL'
+"length"                return 'LENGTH'
 
 
 "++"                    return '++'
@@ -89,15 +100,18 @@ string2  (\'[^"]*\')
 "("                     return '('
 ")"                     return ')' 
 "{"                     return '{'
-"}"                     return '}' 
-";"                   return ';'
-","                   return ','
-
+"}"                     return '}'
+"["                     return '['
+"]"                     return ']'  
+";"                     return ';'
+","                     return ','
+"."                     return '.'
 
 ([a-zA-Z_])[a-zA-Z0-9_ñÑ]*	return 'ID'
 <<EOF>>		          return 'EOF'
 
 /lex
+%right '?' ':'
 %left '||'
 %left '&&'
 %left '==', '!='
@@ -108,6 +122,7 @@ string2  (\'[^"]*\')
 %left '**' '%'
 %left '!'
 %left Umenos
+%left '.'
 //%left MENOS
 %start Init
 
@@ -132,6 +147,11 @@ Contenido
 Cont
     : Instruc { $$ = $1; }
     | Funciones { $$ = $1; }
+    | error 
+        { 
+            //console.error('Este es un error sintáctico: ' + yytext + ', en la linea: ' + this._$.first_line + ', en la columna: ' + this._$.first_column); 
+            $$= new Error_(this._$.first_line , this._$.first_column, 'Sintáctico',yytext,'');
+        }
 ;
 
 
@@ -168,21 +188,39 @@ Funciones
 ;
 
 Parametros
-        : Parametros ',' ID ':' Tipo 
+        : Parametros ',' OpcionParam
         {
-            $1.push(new Simbolo(undefined,$3,$5));
+            $1.push($3);
             $$ = $1;
+        }
+        | OpcionParam
+        {
+            $$ = [$1];
+        }
+;
+OpcionParam
+            :  ID ':' Tipo Dim  
+        {
+            let sim=new Simbolo(undefined,$1,Type.ARREGLO);
+            sim.tipoArreglo=$3;
+            sim.dim = $4;
+            $$ = sim;
         }
         | ID ':' Tipo 
         {
-            $$ = [new Simbolo(undefined,$1,$3)];
+            $$ = new Simbolo(undefined,$1,$3);
         }
 ;
 
+
 Instruc
-        : 'CONSOLE' '(' Exp ')' ';'
+        : 'CONSOLE' '(' Expre ')' ';'
         {
              $$ = new Console($3, @1.first_line, @1.first_column);
+        }
+        |  'GRAFICARTS' '('  ')' ';'
+        {
+             $$ = new Graficarts(@1.first_line, @1.first_column);
         }
         | Sentencia_if {
             $$ = $1;
@@ -206,13 +244,32 @@ Instruc
         | Unario ';' {$$ = new InstrucUnaria($1,@1.first_line, @1.first_column);}
         | Llamada ';' { $$ = $1; } 
         | 'RETURN' Exp ';' { $$ = new Return($2,@1.first_line, @1.first_column); }
-        | error 
-        { 
-            //console.error('Este es un error sintáctico: ' + yytext + ', en la linea: ' + this._$.first_line + ', en la columna: ' + this._$.first_column); 
-            throw new Error_(this._$.first_line , this._$.first_column, 'Sintáctico',yytext,'');
+        | 'RETURN' ';' { $$ = new Return(undefined,@1.first_line, @1.first_column); }
+        | ID AccesoAsig  '=' Exp ';'
+        {
+                $$ =  new AccesoAsig($1,$2,$4,@1.first_line, @1.first_column);
+        } 
+
+;
+
+AccesoAsig
+        : AccesoAsig '[' Exp ']' {
+            $$.push($3);
+        }
+        | '[' Exp ']'{
+            $$ =[$2]
         }
 
 ;
+/*
+AccesoAsig
+        : AccesoAsig '[' Exp ']' {
+            $$= new AccesoAsig(undefined,$3,$1,@1.first_line, @1.first_column);
+        }
+        | ID '[' Exp ']'{
+            $$ = new AccesoAsig($1,$3,null,@1.first_line, @1.first_column);
+        }
+*/
 //*********************SENTENCIAS DE CONTROL
 Sentencia_if
             : 'IF' '(' Exp ')' InstruccionesSent Sentencia_else
@@ -284,16 +341,20 @@ Actualizacion
 
 //*********************** DECLARACION DE VARIABLES
 
+
 Declaracion
             : 'LET' ListaDeclaracion ';'
             {
-                { $$ = new ListDeclaracion($2, @1.first_line, @1.first_column); }
+                $$ = new ListDeclaracion($2, @1.first_line, @1.first_column); 
             }            
             | ID '=' Exp ';'
             {
                 $$ = new Declaracion($1,undefined,$3,true, @1.first_line, @1.first_column);
-            }
-            | 'CONST' ID ':' Tipo '=' Exp ';' 
+            }            
+            | 'CONST' ListaDeclaracionConst ';' 
+            {
+                $$ = new ListDeclaracion($2, @1.first_line, @1.first_column); 
+            } 
 ;
 
 ListaDeclaracion
@@ -318,6 +379,63 @@ OpcionDeclaracion
                 {
                     $$ = new Declaracion($1,undefined,undefined,false, @1.first_line, @1.first_column);
                 }
+                | ID ':' Tipo Dim '=' Exp 
+                {
+                     $$ = new DecArreglo($1,Type.ARREGLO,$3,$4,$6,false,@1.first_line, @1.first_column);
+                }                
+                | ID ':' Tipo Dim  
+                {
+                    $$ = new DecArreglo($1,Type.ARREGLO,$3,$4,undefined,false,@1.first_line, @1.first_column);
+                }
+;
+
+Dim
+            : Dim '['']'
+            {
+                 $$=$1+1;
+            }
+            | '['']'
+            {
+                $$ =1;
+            }
+;
+
+Dimensiones
+            : '['  ']' 
+            {
+                $$ = new AsigArreglo(null,Type.ARREGLO,@1.first_line,@1.first_column);
+            }
+            | '[' Expre ']'
+            {
+                $$ = new AsigArreglo($2,Type.ARREGLO,@1.first_line,@1.first_column);
+            }
+;
+/*
+OpcDim
+        : Expre
+        | Dimensiones 
+        | {
+                $$ = [new Array()]
+            }
+;
+*/
+ListaDeclaracionConst
+                : ListaDeclaracionConst ',' OpcionDeclaracionConst { $1.push($3); }
+                | OpcionDeclaracionConst { $$ = [$1]; }
+;
+
+OpcionDeclaracionConst
+                : ID ':' Tipo '=' Exp
+                {
+                    $$ = new Declaracion($1,$3,$5,false, @1.first_line, @1.first_column);
+                    $$.constante=true;
+                }
+                | ID '=' Exp
+                {
+                    $$ = new Declaracion($1,undefined,$3,false, @1.first_line, @1.first_column);
+                    $$.constante=true;
+                }
+                | ID ':' Tipo Dim '=' Dimensiones 
 ;
 
 //*****************LLAMADAS A FUNCIONES
@@ -411,6 +529,10 @@ Exp
     {
         $$ = new Logica($1, $3,LogicaOpcion.OR, @1.first_line, @1.first_column);
     } 
+    | Exp '?' Exp ':' Exp  
+    {
+        $$ = new Ternario($1, $3, $5, @1.first_line, @1.first_column);
+    }
     | '!' Exp 
     {
         $$ = new Logica($2,null,LogicaOpcion.NOT, @1.first_line, @1.first_column);
@@ -424,12 +546,25 @@ Exp
         $$ = $2;
     }
     | Unario { $$ = $1}
+    | Dimensiones {  $$ = $1; }
+    | AccesoArr
+    {
+        $$ = $1;
+    }
     | F
     {
         $$ = $1;
     }
 ;
 
+AccesoArr
+        : AccesoArr '[' Exp ']' {
+            $$= new Acceso(undefined,$3,$1,@1.first_line, @1.first_column);
+        }
+        | ID '[' Exp ']' {
+            $$ = new Acceso($1,$3,null,@1.first_line, @1.first_column);
+        }
+;
 
 F
     : NUMERO
@@ -438,11 +573,17 @@ F
     }
     | CADENA
     {
-        $$ = new Literal($1.replace(/\"/g,""), @1.first_line, @1.first_column, Type.STRING);
+        let txt=$1.replace(/\\n/g,"\n");
+        txt = txt.replace(/\\t/g,"\t");
+        txt = txt.replace(/\\r/g,"\r");
+        $$ = new Literal(txt.replace(/\"/g,""), @1.first_line, @1.first_column, Type.STRING);
     }
     | CADENA2
     {
-        $$ = new Literal($1.replace(/\'/g,""), @1.first_line, @1.first_column, Type.STRING);
+        let txt2=$1.replace(/\\n/g,"\n");
+        txt2 = txt2.replace(/\\t/g,"\t");
+        txt2 = txt2.replace(/\\r/g,"\r");
+        $$ = new Literal(txt2.replace(/\'/g,""), @1.first_line, @1.first_column, Type.STRING);
     }
     | TRUE
     {
@@ -460,7 +601,14 @@ F
     {
         $$ = $1;
     }
-    | ID '.' LlamadaTypes
+    | NULL 
+    {
+        $$ = new Literal(null, @1.first_line, @1.first_column, Type.NULL);
+    }
+    | Exp '.' LENGTH
+    {
+        $$ = new Length($1,@1.first_line, @1.first_column);
+    }
 ;
 
 Unario 
@@ -472,11 +620,6 @@ Unario
     {
         $$ = new Unario($1,OperadorOpcion.DECRE,@1.first_line, @1.first_column);
     }
-    /*TODO terminar operador unario -
-    |'-' Exp %prec MENOS	
-    {
-       // $$ = new Aritmetico(null, $2, ArithmeticOption.MINUS, @1.first_line,@1.first_column);
-    }*/
 ;
 
 

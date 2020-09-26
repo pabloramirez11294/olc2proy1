@@ -3,7 +3,7 @@ import { Retorno, Type } from "../Modelos/Retorno";
 
 export class Literal extends Expression{
     
-    constructor(private value : any, line : number, column: number, private type : number){
+    constructor(public value : any, line : number, column: number, private type : number){
         super(line, column);
     }
 
@@ -14,5 +14,7 @@ export class Literal extends Expression{
             return {value : this.value, type : Type.STRING};
         else if(this.type == Type.BOOLEAN)
             return {value : this.value, type : Type.BOOLEAN};
+        else if(this.type == Type.NULL)
+            return {value : this.value, type : Type.NULL};
     }
 }

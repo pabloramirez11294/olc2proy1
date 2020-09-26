@@ -1,9 +1,10 @@
 import { Instruction } from "../Modelos/Instruction";
 import { Environment } from "../Entornos/Environment";
 import { errores } from "../Reportes/Errores";
+import { Type } from '../Modelos/Retorno';
 export class Instrucciones extends Instruction{
 
-    constructor(private code : Array<Instruction> ,line : number, column : number){
+    constructor(public code : Array<Instruction> ,line : number, column : number){
         super(line, column);
     }
 
@@ -13,7 +14,7 @@ export class Instrucciones extends Instruction{
             try {
                 const element = instr.execute(newEnv);
                 if(element != undefined || element != null)
-                    return element;                
+                    return element;        
             } catch (error) {
                 errores.push(error);
             }
