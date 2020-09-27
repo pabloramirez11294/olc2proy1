@@ -27,7 +27,7 @@
     const {Arreglo} = require('../Estructuras/Arreglo');
     const {Acceso} = require('../Estructuras/Acceso');
     const {AccesoAsig} = require('../Estructuras/AccesoAsig');
-    const {Length} = require('../Estructuras/Length');
+    const {Length,Pop,Push} = require('../Estructuras/Length');
     const {Simbolo} = require('../Entornos/Environment');
     const {Graficarts} = require('../Reportes/Graficarts');
 %}
@@ -75,6 +75,8 @@ string2  (\'[^']*\')
 "do"                    return 'DO'
 "null"                  return 'NULL'
 "length"                return 'LENGTH'
+"push"                return 'PUSH'
+"pop"                return 'POP'
 
 
 "++"                    return '++'
@@ -122,7 +124,7 @@ string2  (\'[^']*\')
 %left '**' '%'
 %left '!'
 %left Umenos
-%left '.'
+%left '.' 
 //%left MENOS
 %start Init
 
@@ -248,7 +250,15 @@ Instruc
         | ID AccesoAsig  '=' Exp ';'
         {
                 $$ =  new AccesoAsig($1,$2,$4,@1.first_line, @1.first_column);
-        } 
+        }
+        | ID '.' POP '(' ')' ';'
+        {
+            $$ = new Pop(undefined,$1,@1.first_line, @1.first_column);
+        }     
+        | ID '.' PUSH '(' Exp ')' ';'
+        {
+            $$ = new Push(undefined,$1,$5,@1.first_line, @1.first_column);
+        }
 
 ;
 
@@ -613,6 +623,14 @@ F
     | Exp '.' LENGTH
     {
         $$ = new Length($1,@1.first_line, @1.first_column);
+    }
+    | Exp '.' POP '(' ')'
+    {
+        $$ = new Pop($1,undefined,@1.first_line, @1.first_column);
+    }     
+    | Exp '.' PUSH '(' Exp ')'
+    {
+        $$ = new Push($1,undefined,$5,@1.first_line, @1.first_column);
     }
 ;
 

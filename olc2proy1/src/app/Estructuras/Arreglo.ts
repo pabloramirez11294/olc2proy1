@@ -14,6 +14,12 @@ export class Arreglo {
         this.arr[indice]=val;
     }
 
+    public push(val:any):void{
+        this.arr.push(val);
+    }
+    public pop():any{
+        return this.arr.pop();
+    }
     
     public toString():string{
         let txt='[';
