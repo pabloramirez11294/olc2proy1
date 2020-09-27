@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import Ejecucion from '../../gramaticas/ejecucion';
+import Traduccion from '../../gramaticas/traduccion';
 import {  Error_ ,errores} from '../../Reportes/Errores';
 import { Environment, Simbolo } from '../../Entornos/Environment';
 import {TipoEscape} from '../../Instruccion/BreakContinue';
@@ -16,7 +17,6 @@ import { Instrucciones } from 'src/app/Instruccion/Instrucciones';
 import { If } from 'src/app/Instruccion/If';
 import { Relacional } from 'src/app/Expresiones/Relacional';
 import { Aritmetico } from 'src/app/Expresiones/Aritmetico';
-import { TryCatchStmt } from '@angular/compiler';
 
 @Component({
   selector: 'app-inicio',
@@ -45,6 +45,55 @@ export class InicioComponent implements OnInit {
     console.log(3); 
   }`;
   consola = '';
+
+  traducir(){
+    this.tipo_ts="Traducción";
+    errores.length=0;
+    reporte.simbolos.length=0;
+    const entorno = new Environment(null, 'global');
+    try {
+      const instrucciones = Traduccion.parse(this.editor);    
+      for(const instruc of instrucciones){
+        try {
+            if(instruc instanceof Error_){
+              errores.push(instruc);continue;
+            }else if(instruc instanceof Funcion)
+              instruc.execute(entorno);
+        } catch (error) {
+            errores.push(error);  
+        }
+      }
+      for (const instruc of instrucciones) {
+        if(instruc instanceof Error_ ||instruc instanceof Funcion)
+            continue;
+        try {          
+          if(instruc instanceof ListDeclaracion)
+              instruc.execute(entorno);
+             
+        } catch (error) {
+          //console.log(error)
+          if(error.ambito!=null){
+            error.ambito='global';
+            errores.push(error);  
+          }else
+            console.log(error);
+                    
+        }
+      }
+      
+
+    } catch (error) {
+      console.log(error)
+      if(error.ambito!=null){
+        error.ambito='';
+        errores.push(error);  
+      }else
+        errores.push(new Error_(error.lineNumber, 0, 'Lexico', error.message, ''));
+    }
+    //REPORTES    
+    this.simbolos=new Array<Array<string>>();
+    this.reportes(entorno);
+  }
 
   ejecutar() {
     this.tipo_ts="Ejecución";
@@ -91,8 +140,15 @@ export class InicioComponent implements OnInit {
       }else
         errores.push(new Error_(error.lineNumber, 0, 'Lexico', error.message, ''));
     }
-    //REPORTES
-    try {
+    //REPORTES    
+    this.simbolos=new Array<Array<string>>();
+    this.reportes(entorno);    
+    console.log('-----',this.simbolos);
+  }
+
+  reportes(entorno:Environment){
+     //REPORTES
+     try {
       const tablaVar=entorno.getTablaSimbolos();
       console.log('Tabla de Simbolos: ', tablaVar);
       this.setTablaSimbolos(tablaVar);
@@ -104,7 +160,6 @@ export class InicioComponent implements OnInit {
     } catch (error) {
       console.log(error);
     }
-    
   }
 
   setConsola() {
@@ -116,25 +171,22 @@ export class InicioComponent implements OnInit {
     this.consola='';
     txtConsola.consolatxt="";
   }
-  setTablaSimbolos(simbolos:Map<string,Simbolo>):void{
-    this.simbolos=new Array<Array<string>>();
+  setTablaSimbolos(tSimbolos:Map<string,Simbolo>):void{
     reporte.simbolos.forEach(element => {
       this.simbolos.push(element);
     });
-    for (var simbolo of simbolos.values()) {
-      const s:Array<string>=new Array<string>(simbolo.id,simbolo.valor,simbolo.tipo.toString(),
+    for (var simbolo of tSimbolos.values()) {
+      const s:Array<string>=new Array<string>(simbolo.id,simbolo.valor,simbolo.tipo?.toString(),
                                                   simbolo.ambito,simbolo.linea,simbolo.columna);
       this.simbolos.push(s);
     }
-    console.log(this.simbolos);
   }
   setTablaFunciones(simbolos:Map<string,Funcion>):void{
-    this.simbolos=new Array<Array<string>>();
     reporte.simbolos.forEach(element => {
       this.simbolos.push(element);
     });
     for (var func of simbolos.values()) {
-      const s:Array<string>=new Array<string>(func.id,'',func.tipo.toString(),
+      const s:Array<string>=new Array<string>("func_"+func.id,'',func.tipo?.toString(),
                                                   '',func.line?.toString(),func.column?.toString());
       this.simbolos.push(s);
     }

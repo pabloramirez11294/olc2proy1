@@ -7,7 +7,7 @@
 
       </div>
       <div class="btn-group mr-2" role="group" aria-label="First group">
-        <button type="button" class="btn btn-success" >Traducir</button>
+        <button type="button" class="btn btn-success" (click)="traducir()">Traducir</button>
 
       </div>
 
@@ -24,7 +24,7 @@
 
 <div class="container-fluid">
   <div class="row">
-    <div class="col-12 col-md-7 p-4">
+    <div class="col-12 col-md-6 p-4">
       <div class="containers">
         <ngx-codemirror [options]="{
           lineNumbers: true,
@@ -38,7 +38,7 @@
       </div>
     </div>
 
-    <div class="col-17 col-md-2 p-4">
+    <div class="col-17 col-md-5 p-4">
       <textarea class="consola" [(ngModel)]="consola"></textarea>
     </div>
   </div>

@@ -388,6 +388,23 @@ OpcionDeclaracion
                     $$ = new DecArreglo($1,Type.ARREGLO,$3,$4,undefined,false,@1.first_line, @1.first_column);
                 }
 ;
+OpcionDeclaracionConst
+                : ID ':' Tipo '=' Exp
+                {
+                    $$ = new Declaracion($1,$3,$5,false, @1.first_line, @1.first_column);
+                    $$.constante=true;
+                }
+                | ID '=' Exp
+                {
+                    $$ = new Declaracion($1,undefined,$3,false, @1.first_line, @1.first_column);
+                    $$.constante=true;
+                }
+                | ID ':' Tipo Dim '=' Exp 
+                {
+                     $$ = new DecArreglo($1,Type.ARREGLO,$3,$4,$6,false,@1.first_line, @1.first_column);
+                     $$.constante=true;
+                } 
+;
 
 Dim
             : Dim '['']'
@@ -424,19 +441,7 @@ ListaDeclaracionConst
                 | OpcionDeclaracionConst { $$ = [$1]; }
 ;
 
-OpcionDeclaracionConst
-                : ID ':' Tipo '=' Exp
-                {
-                    $$ = new Declaracion($1,$3,$5,false, @1.first_line, @1.first_column);
-                    $$.constante=true;
-                }
-                | ID '=' Exp
-                {
-                    $$ = new Declaracion($1,undefined,$3,false, @1.first_line, @1.first_column);
-                    $$.constante=true;
-                }
-                | ID ':' Tipo Dim '=' Dimensiones 
-;
+
 
 //*****************LLAMADAS A FUNCIONES
 
