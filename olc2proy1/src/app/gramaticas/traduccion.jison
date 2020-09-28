@@ -118,8 +118,8 @@ string2  (\'[^']*\')
 %left '>=', '<=', '<', '>'
 %left '++' '--'
 %left '+' '-'
-%left '*' '/'
-%left '**' '%'
+%left '*' '/' '%'
+%left '**' 
 %left '!'
 %left Umenos
 %left '.'
