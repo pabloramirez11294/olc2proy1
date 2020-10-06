@@ -18,7 +18,7 @@
     const {ListDeclaracion} = require('../Instruccion/ListDeclaracion');
     const {Break,Continue,TipoEscape} = require('../Instruccion/BreakContinue');
     const {While,DoWhile} = require('../Instruccion/While');
-    const {For} = require('../Instruccion/For');
+    const {For,ForOf} = require('../Instruccion/For');
     const {Instrucciones} = require('../Instruccion/Instrucciones');
     const {InstrucUnaria} = require('../Instruccion/InstrucUnaria');
     const {Funcion} = require('../Instruccion/Funcion');
@@ -77,6 +77,7 @@ string2  (\'[^']*\')
 "length"                return 'LENGTH'
 "push"                return 'PUSH'
 "pop"                return 'POP'
+"of"                return 'OF'
 
 
 "++"                    return '++'
@@ -231,6 +232,10 @@ Instruc
         {
             $$ = new For($3,$4,$6, $8,@1.first_line, @1.first_column);
         }
+        | 'FOR' '(' DeclaForOF 'OF' Exp ')' InstruccionesSent
+        {         
+            $$ = new ForOf($3,$5,$7,@1.first_line, @1.first_column);
+        }
         | 'WHILE' '(' Exp ')' InstruccionesSent 
         {
             $$ = new While($3,$5, @1.first_line, @1.first_column);
@@ -270,6 +275,18 @@ AccesoAsig
             $$ =[$2]
         }
 
+;
+
+DeclaForOF
+        : 'LET' ID
+        {
+            $$ = new Declaracion($2,undefined,undefined,false, @1.first_line, @1.first_column);
+        }
+        | 'CONST' ID
+        {
+            $$ = new Declaracion($2,undefined,undefined,false, @1.first_line, @1.first_column);
+            $$.constante=true;
+        }
 ;
 /*
 AccesoAsig
