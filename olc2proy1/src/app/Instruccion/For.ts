@@ -10,7 +10,7 @@ import { Arreglo } from '../Estructuras/Arreglo';
 
 export class For extends Instruction{
 
-    constructor(private declaracion:Declaracion,private condicion : Expression,private Actualizacion:Expression, private code : Instrucciones, line : number, column : number){
+    constructor(private declaracion:Declaracion,public condicion : Expression,private Actualizacion:Expression, public code : Instrucciones, line : number, column : number){
         super(line, column);
     }
 
