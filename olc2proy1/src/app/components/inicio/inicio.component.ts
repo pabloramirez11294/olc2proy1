@@ -17,6 +17,11 @@ import { Instrucciones } from 'src/app/Instruccion/Instrucciones';
 import { If } from 'src/app/Instruccion/If';
 import { Relacional } from 'src/app/Expresiones/Relacional';
 import { Aritmetico } from 'src/app/Expresiones/Aritmetico';
+import { Expression } from '../../Modelos/Expression';
+import { Return } from 'src/app/Instruccion/Return';
+import { While } from 'src/app/Instruccion/While';
+import { For } from 'src/app/Instruccion/For';
+import { Switch } from 'src/app/Instruccion/Switch';
 
 @Component({
   selector: 'app-inicio',
@@ -281,6 +286,27 @@ export class InicioComponent implements OnInit {
       }else if(raiz instanceof Funcion){
         this.cont++;cuerpo+=this.cadena(id,raiz.constructor.name,this.cont,raiz.instrucciones.constructor.name);
         cuerpo += this.recorrerAST(raiz.instrucciones, this.cont); 
+      }else if(raiz instanceof Return){
+        this.cont++;cuerpo+=this.cadena(id,raiz.constructor.name,this.cont,raiz.exp.constructor.name);
+        cuerpo += this.recorrerAST(raiz.exp, this.cont); 
+      }else if(raiz instanceof While){
+        this.cont++;      
+        cuerpo += "\""+id+"_" + raiz.constructor.name + "\"->\""+this.cont+"_"+raiz.condicion.constructor.name+"\"";
+        cuerpo += this.recorrerAST(raiz.condicion, this.cont); 
+        this.cont++;cuerpo+=this.cadena(id,raiz.constructor.name,this.cont,raiz.code.constructor.name);
+        cuerpo += this.recorrerAST(raiz.code, this.cont); 
+      }else if(raiz instanceof For){
+        this.cont++;      
+        cuerpo += "\""+id+"_" + raiz.constructor.name + "\"->\""+this.cont+"_"+raiz.condicion.constructor.name+"\"";
+        cuerpo += this.recorrerAST(raiz.condicion, this.cont); 
+        this.cont++;cuerpo+=this.cadena(id,raiz.constructor.name,this.cont,raiz.code.constructor.name);
+        cuerpo += this.recorrerAST(raiz.code, this.cont); 
+      }else if(raiz instanceof Switch){
+        this.cont++;      
+        cuerpo += "\""+id+"_" + raiz.constructor.name + "\"->\""+this.cont+"_"+raiz.condicion.constructor.name+"\"";
+        cuerpo += this.recorrerAST(raiz.condicion, this.cont); 
+        this.cont++;cuerpo+=this.cadena(id,raiz.constructor.name,this.cont,raiz.defaul.constructor.name);
+        cuerpo += this.recorrerAST(raiz.defaul, this.cont); 
       }else{
         
 

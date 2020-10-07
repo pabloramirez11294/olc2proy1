@@ -8,7 +8,7 @@ import {TipoEscape,Break} from './BreakContinue';
 
 export class Switch extends Instruction{
 
-    constructor(private condicion : Expression, private cases :Map<Expression,Instrucciones>, private defaul : Instrucciones | null,
+    constructor(public condicion : Expression, private cases :Map<Expression,Instrucciones>, public defaul : Instrucciones | null,
         line : number, column : number){
         super(line, column);
     }
@@ -40,7 +40,7 @@ export class Switch extends Instruction{
             if(val!=undefined)
                     return val;
         }
-        console.log(this.cases);
+      //  console.log(this.cases);
         
     }
 }

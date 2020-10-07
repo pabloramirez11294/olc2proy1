@@ -7,7 +7,7 @@ import {TipoEscape} from "../Instruccion/BreakContinue";
 
 export class While extends Instruction{
 
-    constructor(private condicion : Expression, private code : Instruction, line : number, column : number){
+    constructor(public condicion : Expression, public code : Instruction, line : number, column : number){
         super(line, column);
     }
 

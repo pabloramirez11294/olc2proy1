@@ -4,7 +4,7 @@ import { Environment } from "../Entornos/Environment";
 import { Retorno, Type } from "../Modelos/Retorno";
 export class Return extends Instruction{
 
-    constructor(private exp:Expression,line : number, column : number){
+    constructor(public exp:Expression,line : number, column : number){
         super(line, column);
     }
 
